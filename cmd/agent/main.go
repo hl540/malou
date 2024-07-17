@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	"github.com/hl540/malou/internal/app/agent"
-	"github.com/hl540/malou/internal/client"
 	"github.com/hl540/malou/internal/worker"
 	"github.com/joho/godotenv"
 	"log"
@@ -24,15 +23,13 @@ func main() {
 		panic(err)
 	}
 
-	// 初始化client
-	if err = client.InitClient(config); err != nil {
-		panic(err)
-	}
-
 	// 初始化WorkerPool
 	worker.InitWorkerPool(config.WorkerPoolSize)
 
-	app := agent.NewAgent(config)
+	app, err := agent.NewAgent(config)
+	if err != nil {
+		panic(err)
+	}
 
 	ctx, stop := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
 	defer stop()

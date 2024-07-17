@@ -51,9 +51,10 @@ func (l *ReportLog) Send(req *v1.ReportPipelineLogReq) {
 
 	jsonByte, _ := json.Marshal(req)
 	logrus.New().WithContext(l.reportStream.Context()).Infof("%s", string(jsonByte))
-
-	if err := l.reportStream.Send(req); err != nil {
-		logrus.New().WithContext(l.reportStream.Context()).Errorf("%s", string(jsonByte))
+	if l.reportStream != nil {
+		if err := l.reportStream.Send(req); err != nil {
+			Logger.Errorf("Failed to report log, %s", err.Error())
+		}
 	}
 }
 
@@ -66,7 +67,7 @@ func (l *ReportLog) Log(message string, v ...any) {
 
 func (l *ReportLog) Error(message string, v ...any) {
 	l.Send(&v1.ReportPipelineLogReq{
-		Type:    v1.ReportType_STEP,
+		Type:    v1.ReportType_ERROR,
 		Message: fmt.Sprintf(message, v...),
 	})
 }

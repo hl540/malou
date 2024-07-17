@@ -1,4 +1,4 @@
-package agent
+package container_runtime
 
 import "fmt"
 
@@ -7,16 +7,14 @@ type EnvValue struct {
 	Value string
 }
 
-func (v *EnvValue) Strings() string {
+func (v *EnvValue) String() string {
 	return fmt.Sprintf("%s=%s", v.Key, v.Value)
 }
 
-var envs = make(map[string]*EnvValue)
-
-func GetEnvs() []string {
+func EnvsToArray(envs []*EnvValue) []string {
 	var values []string
 	for _, item := range envs {
-		values = append(values, item.Strings())
+		values = append(values, item.String())
 	}
 	return values
 }

@@ -12,6 +12,7 @@ type Config struct {
 	HeartbeatFrequency    int64  `yaml:"HeartbeatFrequency"`    // 心跳频率（秒）
 	PullPipelineFrequency int64  `yaml:"PullPipelineFrequency"` // 拉取流水线任务频率（秒）
 	WorkerPoolSize        int    `yaml:"WorkerPoolSize"`        // 工作池大小，最大同时执行pipeline的数量
+	WorkDir               string `yaml:"WorkDir"`               // 工作目录
 }
 
 func LoadConfig() (*Config, error) {
@@ -36,6 +37,7 @@ func LoadConfig() (*Config, error) {
 	config.HeartbeatFrequency = utils.GetEnvDefault(HeartbeatFrequencyEnvKey, config.HeartbeatFrequency)
 	config.PullPipelineFrequency = utils.GetEnvDefault(PullPipelineFrequencyEnvKey, config.PullPipelineFrequency)
 	config.WorkerPoolSize = utils.GetEnvDefault(WorkerPoolSizeEnvKey, config.WorkerPoolSize)
+	config.WorkDir = utils.GetEnvDefault(WorkDirEnvKey, config.WorkDir)
 
 	return &config, nil
 }

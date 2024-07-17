@@ -10,6 +10,7 @@ import (
 	"github.com/hl540/malou/utils"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
+	"path"
 	"time"
 )
 
@@ -108,29 +109,30 @@ func (a *Agent) PullPipeline(ctx context.Context) {
 }
 
 func (a *Agent) ExecutePipeline(ctx context.Context, pipelineID string, pipeline *v1.Pipeline) {
-	// 工作目录，需要挂载到容器中
-	workDir := "C:/Users/67440/go/src/malou/work/" + pipelineID
-
-	// 创建上报log流
+	// 创建stream，回传执行过程log
 	reportStream, err := a.MalouClient.ReportPipelineLog(ctx)
 	if err != nil {
-		// TODO
-		return
+		Logger.WithContext(ctx).Errorf("Failed to create report stream, %s", err.Error())
 	}
 	defer reportStream.CloseAndRecv()
 	reportLog := NewReportLog(pipelineID, reportStream)
 
+	// 创建执行step的环境，默认docker容器运行时
 	containerRuntime, err := container_runtime.NewDockerRuntime(a.DockerClient)
 	if err != nil {
+		reportLog.Log("Failed to create container runtime, %s", err.Error())
 		return
 	}
+
+	// 工作目录，需要挂载到容器中
+	workDir := path.Join(a.Config.WorkDir, pipelineID)
+
+	reportLog.Log("start executing pipeline [%s],[%s]", pipeline.Name, pipelineID)
 	for _, step := range pipeline.Steps {
-		reportLog.Log("Start execution %s", step.Name)
-		stepReportLog := reportLog.WithStep(step.Name)
 		// 创建step执行器
-		stepExecutor := NewBaseStepExecutor(containerRuntime, stepReportLog)
+		stepExecutor := NewBaseStepExecutor(containerRuntime, reportLog)
 		if err := stepExecutor.Execute(ctx, step, workDir); err != nil {
-			reportLog.Error("execution failure: ", err.Error())
+			reportLog.Error("execution failure: %s", err.Error())
 			return
 		}
 	}

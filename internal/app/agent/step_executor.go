@@ -1,6 +1,7 @@
 package agent
 
 import (
+	"bufio"
 	"context"
 	"github.com/hl540/malou/internal/container_runtime"
 	"github.com/hl540/malou/proto/v1"
@@ -24,23 +25,31 @@ func NewBaseStepExecutor(cr container_runtime.ContainerRuntime, reportLog *Repor
 }
 
 func (e *BaseStepExecutor) Execute(ctx context.Context, step *v1.Step, workDir string) error {
+	e.reportLog.WithStep(step.Name).Log("start executing step [%s]", step.Name)
 	// 创建容器
-	containerID, err := e.cr.Create(ctx, step.Image, workDir)
+	containerID, err := e.cr.Create(ctx, step.Image, nil, workDir)
 	if err != nil {
 		return err
 	}
-
 	defer func() {
-		err := e.cr.Clear(ctx, containerID)
-		if err != nil {
+		// 清理容器
+		if err := e.cr.Clear(ctx, containerID); err != nil {
 			log.Printf("An error occurred to delete the %s: %s", containerID, err.Error())
 		}
 	}()
 
 	// 多个命令Attach的方式依次执行
 	for _, cmd := range step.Commands {
-		if err := e.cr.AttachExec(ctx, containerID, cmd); err != nil {
+		e.reportLog.WithStep(step.Name).WithCmd(cmd).Log("start executing cmd [%s]", cmd)
+		out, err := e.cr.AttachExec(ctx, containerID, cmd)
+		// 执行随便清理容器
+		if err != nil {
 			return err
+		}
+		// 逐行读取log
+		scanner := bufio.NewScanner(out)
+		for scanner.Scan() {
+			e.reportLog.WithStep(step.Name).WithCmd(cmd).Log(scanner.Text())
 		}
 	}
 	return nil

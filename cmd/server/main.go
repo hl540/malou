@@ -2,12 +2,14 @@ package main
 
 import (
 	"context"
+	"errors"
 	"github.com/hl540/malou/proto/v1"
 	"github.com/hl540/malou/utils"
 	"google.golang.org/grpc"
 	"io"
 	"log"
 	"net"
+	"net/http"
 	"time"
 )
 
@@ -35,16 +37,39 @@ func (s *server) Heartbeat(ctx context.Context, req *v1.HeartbeatReq) (*v1.Heart
 	}, nil
 }
 
-//var pn = 0
+var pipeline = make(chan *v1.Pipeline)
 
 func (s *server) PullPipeline(context.Context, *v1.PullPipelineReq) (*v1.PullPipelineResp, error) {
-	//if pn > 5 {
-	//	return nil, errors.New("not")
-	//}
-	//pn++
-	return &v1.PullPipelineResp{
-		PipelineId: utils.StringWithCharset(20, utils.Charset3),
-		Pipeline: &v1.Pipeline{
+	select {
+	case p := <-pipeline:
+		return &v1.PullPipelineResp{
+			PipelineId: utils.StringWithCharset(20, utils.Charset2),
+			Pipeline:   p,
+		}, nil
+	default:
+		return nil, errors.New("not")
+	}
+}
+
+func (s *server) ReportPipelineLog(stream v1.MalouServer_ReportPipelineLogServer) error {
+	for {
+		reportLog, err := stream.Recv()
+		if err == io.EOF {
+			return stream.SendAndClose(&v1.ReportPipelineLogResp{
+				Timestamp: time.Now().Unix(),
+				Message:   "success",
+			})
+		}
+		if err != nil {
+			return err
+		}
+		log.Println(reportLog)
+	}
+}
+
+func main() {
+	http.HandleFunc("/new", func(w http.ResponseWriter, r *http.Request) {
+		pipeline <- &v1.Pipeline{
 			Kind: "docker",
 			Type: "xxxx",
 			Name: "asada",
@@ -69,30 +94,15 @@ func (s *server) PullPipeline(context.Context, *v1.PullPipelineReq) (*v1.PullPip
 					},
 				},
 			},
-		}}, nil
-}
-
-func (s *server) ReportPipelineLog(stream v1.MalouServer_ReportPipelineLogServer) error {
-	for {
-		reportLog, err := stream.Recv()
-		if err == io.EOF {
-			return stream.SendAndClose(&v1.ReportPipelineLogResp{
-				Timestamp: time.Now().Unix(),
-				Message:   "success",
-			})
 		}
-		if err != nil {
-			return err
-		}
-		log.Println(reportLog)
-	}
-}
+	})
+	go http.ListenAndServe(":9999", nil)
 
-func main() {
 	lis, err := net.Listen("tcp", ":5555")
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)
 	}
+
 	s := grpc.NewServer()
 	v1.RegisterMalouServerServer(s, &server{})
 	log.Printf("server listening at %v", lis.Addr())

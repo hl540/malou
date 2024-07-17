@@ -1,7 +1,5 @@
 package agent
 
-const WorkDir = "/var/workspace"
-
 const (
 	ConfigNameEnvKey            = "CONFIG_NAME"
 	TokenEnvKey                 = "TOKEN"
@@ -9,4 +7,5 @@ const (
 	HeartbeatFrequencyEnvKey    = "HEARTBEAT_FREQUENCY"
 	PullPipelineFrequencyEnvKey = "PULL_PIPELINE_FREQUENCY"
 	WorkerPoolSizeEnvKey        = "WORKER_POOL_SIZE"
+	WorkDirEnvKey               = "WORK_DIR"
 )
