@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+option go_package = "./proto/v1";
+
+import "heartbeat.proto";
+import "pipeline.proto";
+
+service MalouServer {
+  // 心跳请
+  rpc Heartbeat(HeartbeatReq) returns (HeartbeatResp) {}
+  // 拉取流水线任务
+  rpc PullPipeline(PullPipelineReq) returns (PullPipelineResp) {}
+  // 回显执行结果
+  rpc ReportPipelineLog(stream ReportPipelineLogReq) returns (ReportPipelineLogResp) {}
+}

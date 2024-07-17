@@ -1,0 +1,7 @@
+Token: "xxxxx"
+ServerAddress: 127.0.0.1:5555
+HeartbeatFrequency: 10
+PullPipelineFrequency: 1
+WorkerPoolSize: 3
+Clients:
+  -

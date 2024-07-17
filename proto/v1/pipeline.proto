@@ -1,0 +1,48 @@
+syntax = "proto3";
+
+option go_package = "./proto/v1";
+
+message PullPipelineReq {
+
+}
+
+message Step {
+  string name = 1;
+  string image = 2;
+  repeated string commands = 3;
+}
+
+message Pipeline {
+  string kind = 1;
+  string type = 2;
+  string name = 3;
+  repeated Step steps = 4;
+}
+
+message PullPipelineResp {
+  string pipeline_id = 1;
+  string message = 2;
+  Pipeline pipeline = 3;
+}
+
+enum ReportType {
+  LOG = 0;
+  STEP = 1;
+  ERROR = 2;
+  DONE = 3;
+}
+
+message ReportPipelineLogReq {
+  string pipeline_id = 1;
+  ReportType type = 2;
+  string step = 3;
+  string cmd = 4;
+  string message = 5;
+  int64 timestamp = 6;
+  int64 duration = 7;
+}
+
+message ReportPipelineLogResp {
+  int64 timestamp = 1;
+  string message = 2;
+}
