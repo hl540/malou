@@ -2,12 +2,15 @@ package container_runtime
 
 import "C"
 import (
+	"bufio"
+	"bytes"
 	"context"
 	"fmt"
 	"github.com/docker/docker/api/types/container"
 	"github.com/docker/docker/api/types/filters"
 	"github.com/docker/docker/api/types/image"
 	"github.com/docker/docker/client"
+	"github.com/docker/docker/pkg/stdcopy"
 	"io"
 	"strings"
 )
@@ -90,7 +93,12 @@ func (d *DockerRuntime) AttachExec(ctx context.Context, containerID, cmd string)
 	if err != nil {
 		return nil, err
 	}
-	return attachResp.Reader, nil
+	var stdoutBuf, stderrBuf bytes.Buffer
+	_, err = stdcopy.StdCopy(&stdoutBuf, &stderrBuf, attachResp.Reader)
+	if err != nil {
+		return nil, err
+	}
+	return io.MultiReader(bufio.NewReader(&stdoutBuf), bufio.NewReader(&stderrBuf)), nil
 }
 
 func (d *DockerRuntime) Clear(ctx context.Context, containerID string) error {
