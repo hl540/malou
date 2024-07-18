@@ -98,7 +98,7 @@ func (d *DockerRuntime) Clear(ctx context.Context, containerID string) error {
 	if err != nil {
 		return err
 	}
-	if len(containers) > 0 {
+	if len(containers) == 0 {
 		return nil
 	}
 	// 删除容器，Force

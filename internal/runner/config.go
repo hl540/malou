@@ -1,4 +1,4 @@
-package agent
+package runner
 
 import (
 	"github.com/hl540/malou/utils"
@@ -39,5 +39,12 @@ func LoadConfig() (*Config, error) {
 	config.WorkerPoolSize = utils.GetEnvDefault(WorkerPoolSizeEnvKey, config.WorkerPoolSize)
 	config.WorkDir = utils.GetEnvDefault(WorkDirEnvKey, config.WorkDir)
 
+	// 默认值
+	if config.HeartbeatFrequency == 0 {
+		config.HeartbeatFrequency = HeartbeatFrequencyDefault
+	}
+	if config.PullPipelineFrequency == 0 {
+		config.PullPipelineFrequency = PullPipelineFrequencyDefault
+	}
 	return &config, nil
 }

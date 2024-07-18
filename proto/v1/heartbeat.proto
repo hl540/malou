@@ -17,7 +17,7 @@ message DiskInfo {
 }
 
 message HeartbeatReq {
-  string agent_token = 1;
+  string token = 1;
   repeated double cpu_percent = 2;
   MemoryInfo memory_info = 3;
   DiskInfo disk_info = 4;

@@ -90,12 +90,12 @@ func (wp *WorkerPool) Status() map[string]string {
 	return wp.pool
 }
 
-var Worker *WorkerPool
+var Pool *WorkerPool
 
 func InitWorkerPool(poolSize int) {
-	Worker = &WorkerPool{pool: make(map[string]string)}
+	Pool = &WorkerPool{pool: make(map[string]string)}
 	for i := 0; i < poolSize; i++ {
 		workID := utils.StringWithCharset(10, utils.Charset2)
-		Worker.pool[workID] = ""
+		Pool.pool[workID] = ""
 	}
 }

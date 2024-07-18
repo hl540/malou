@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"github.com/hl540/malou/proto/v1"
 	"github.com/hl540/malou/utils"
@@ -17,20 +18,10 @@ type server struct {
 	v1.UnimplementedMalouServerServer
 }
 
+var runnerInfo = make(map[string]*v1.HeartbeatReq)
+
 func (s *server) Heartbeat(ctx context.Context, req *v1.HeartbeatReq) (*v1.HeartbeatResp, error) {
-	log.Printf("[%s]心跳请求", ctx.Value("token"))
-	//for i, item := range req.CpuPercent {
-	//	log.Printf("[cpu%d]使用率: %.2f", i, item)
-	//}
-	//log.Printf("内存总量: %v MB", req.MemoryInfo.Total/1024/1024)
-	//log.Printf("内存使用量: %v MB", req.MemoryInfo.Used/1024/1024)
-	//log.Printf("内存空闲量: %v MB", req.MemoryInfo.Free/1024/1024)
-	//log.Printf("内存使用率: %.2f%%", req.MemoryInfo.UsedPercent)
-	//
-	//log.Printf("磁盘总量: %v MB", req.DiskInfo.Total/1024/1024)
-	//log.Printf("磁盘使用量: %v MB", req.DiskInfo.Used/1024/1024)
-	//log.Printf("磁盘空闲量: %v MB", req.DiskInfo.Free/1024/1024)
-	//log.Printf("磁盘使用率: %.2f%%", req.DiskInfo.UsedPercent)
+	runnerInfo[req.Token] = req
 	return &v1.HeartbeatResp{
 		Timestamp: time.Now().Unix(),
 		Message:   "success",
@@ -95,6 +86,11 @@ func main() {
 				},
 			},
 		}
+	})
+	http.HandleFunc("/info", func(writer http.ResponseWriter, request *http.Request) {
+		jsonByte, _ := json.Marshal(runnerInfo)
+		writer.Header().Set("Content-Type", "application/json")
+		writer.Write(jsonByte)
 	})
 	go http.ListenAndServe(":9999", nil)
 

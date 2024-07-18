@@ -1,9 +1,9 @@
-package agent
+package runner
 
 import (
 	"bufio"
 	"context"
-	"github.com/hl540/malou/internal/container_runtime"
+	"github.com/hl540/malou/internal/runner/container_runtime"
 	"github.com/hl540/malou/proto/v1"
 	"log"
 )

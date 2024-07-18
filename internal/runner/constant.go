@@ -1,4 +1,4 @@
-package agent
+package runner
 
 const (
 	ConfigNameEnvKey            = "CONFIG_NAME"
@@ -9,3 +9,6 @@ const (
 	WorkerPoolSizeEnvKey        = "WORKER_POOL_SIZE"
 	WorkDirEnvKey               = "WORK_DIR"
 )
+
+const HeartbeatFrequencyDefault = 30
+const PullPipelineFrequencyDefault = 15

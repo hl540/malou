@@ -1,10 +1,8 @@
-package agent
+package runner
 
 import (
-	"encoding/json"
 	"fmt"
 	v1 "github.com/hl540/malou/proto/v1"
-	"github.com/sirupsen/logrus"
 	"time"
 )
 
@@ -41,6 +39,10 @@ func (l *ReportLog) WithCmd(cmd string) *ReportLog {
 }
 
 func (l *ReportLog) Send(req *v1.ReportPipelineLogReq) {
+	if l.reportStream != nil {
+		Logger.Infof("%v", req)
+		return
+	}
 	if req != nil {
 		req.PipelineId = l.pipelineID
 		req.Step = l.step
@@ -48,9 +50,6 @@ func (l *ReportLog) Send(req *v1.ReportPipelineLogReq) {
 		req.Timestamp = time.Now().Unix()
 		req.Duration = req.Timestamp - l.timestamp
 	}
-
-	jsonByte, _ := json.Marshal(req)
-	logrus.New().WithContext(l.reportStream.Context()).Infof("%s", string(jsonByte))
 	if l.reportStream != nil {
 		if err := l.reportStream.Send(req); err != nil {
 			Logger.Errorf("Failed to report log, %s", err.Error())
@@ -68,6 +67,13 @@ func (l *ReportLog) Log(message string, v ...any) {
 func (l *ReportLog) Error(message string, v ...any) {
 	l.Send(&v1.ReportPipelineLogReq{
 		Type:    v1.ReportType_ERROR,
+		Message: fmt.Sprintf(message, v...),
+	})
+}
+
+func (l *ReportLog) Done(message string, v ...any) {
+	l.Send(&v1.ReportPipelineLogReq{
+		Type:    v1.ReportType_DONE,
 		Message: fmt.Sprintf(message, v...),
 	})
 }
