@@ -1,6 +1,5 @@
 package container_runtime
 
-import "C"
 import (
 	"bufio"
 	"bytes"
