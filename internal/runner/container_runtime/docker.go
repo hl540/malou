@@ -29,10 +29,6 @@ func (d *DockerRuntime) Create(ctx context.Context, imageName string, env []*Env
 	if err := d.pullImage(ctx, imageName); err != nil {
 		return "", err
 	}
-
-	env = append(env, &EnvValue{Key: "LANG", Value: "C.UTF-8"})
-	env = append(env, &EnvValue{Key: "LC_ALL", Value: "C.UTF-8"})
-
 	// 创建容器
 	conf := &container.Config{
 		Env:        EnvsToArray(env),
