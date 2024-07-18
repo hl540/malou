@@ -49,7 +49,8 @@ func (e *BaseStepExecutor) Execute(ctx context.Context, step *v1.Step, workDir s
 		// 逐行读取log
 		scanner := bufio.NewScanner(out)
 		for scanner.Scan() {
-			e.reportLog.WithStep(step.Name).WithCmd(cmd).Log(scanner.Text())
+			text := scanner.Text()
+			e.reportLog.WithStep(step.Name).WithCmd(cmd).Log(text)
 		}
 	}
 	return nil

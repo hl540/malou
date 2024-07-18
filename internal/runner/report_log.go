@@ -39,7 +39,7 @@ func (l *ReportLog) WithCmd(cmd string) *ReportLog {
 }
 
 func (l *ReportLog) Send(req *v1.ReportPipelineLogReq) {
-	if l.reportStream != nil {
+	if l.reportStream == nil {
 		Logger.Infof("%v", req)
 		return
 	}

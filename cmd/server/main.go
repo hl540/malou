@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"github.com/hl540/malou/proto/v1"
 	"github.com/hl540/malou/utils"
 	"google.golang.org/grpc"
@@ -28,7 +29,7 @@ func (s *server) Heartbeat(ctx context.Context, req *v1.HeartbeatReq) (*v1.Heart
 	}, nil
 }
 
-var pipeline = make(chan *v1.Pipeline)
+var pipeline = make(chan *v1.Pipeline, 10)
 
 func (s *server) PullPipeline(context.Context, *v1.PullPipelineReq) (*v1.PullPipelineResp, error) {
 	select {
@@ -54,7 +55,7 @@ func (s *server) ReportPipelineLog(stream v1.MalouServer_ReportPipelineLogServer
 		if err != nil {
 			return err
 		}
-		log.Println(reportLog)
+		fmt.Println(reportLog.Message)
 	}
 }
 
