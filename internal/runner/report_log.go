@@ -8,13 +8,13 @@ import (
 
 type ReportLog struct {
 	pipelineID   string
-	reportStream v1.MalouServer_ReportPipelineLogClient
+	reportStream v1.Malou_ReportPipelineLogClient
 	step         string
 	cmd          string
 	timestamp    int64
 }
 
-func NewReportLog(pipelineID string, reportStream v1.MalouServer_ReportPipelineLogClient) *ReportLog {
+func NewReportLog(pipelineID string, reportStream v1.Malou_ReportPipelineLogClient) *ReportLog {
 	return &ReportLog{
 		pipelineID:   pipelineID,
 		reportStream: reportStream,
@@ -38,8 +38,8 @@ func (l *ReportLog) WithCmd(cmd string) *ReportLog {
 	}
 }
 
-func (l *ReportLog) Send(req *v1.ReportPipelineLogReq) {
-	if l.reportStream != nil {
+func (l *ReportLog) Send(req *v1.PipelineLog) {
+	if l.reportStream == nil {
 		Logger.Infof("%v", req)
 		return
 	}
@@ -58,22 +58,22 @@ func (l *ReportLog) Send(req *v1.ReportPipelineLogReq) {
 }
 
 func (l *ReportLog) Log(message string, v ...any) {
-	l.Send(&v1.ReportPipelineLogReq{
-		Type:    v1.ReportType_LOG,
+	l.Send(&v1.PipelineLog{
+		Type:    v1.PipelineLogType_LOG,
 		Message: fmt.Sprintf(message, v...),
 	})
 }
 
 func (l *ReportLog) Error(message string, v ...any) {
-	l.Send(&v1.ReportPipelineLogReq{
-		Type:    v1.ReportType_ERROR,
+	l.Send(&v1.PipelineLog{
+		Type:    v1.PipelineLogType_ERROR,
 		Message: fmt.Sprintf(message, v...),
 	})
 }
 
 func (l *ReportLog) Done(message string, v ...any) {
-	l.Send(&v1.ReportPipelineLogReq{
-		Type:    v1.ReportType_DONE,
+	l.Send(&v1.PipelineLog{
+		Type:    v1.PipelineLogType_DONE,
 		Message: fmt.Sprintf(message, v...),
 	})
 }

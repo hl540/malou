@@ -2,14 +2,43 @@ syntax = "proto3";
 
 option go_package = "./proto/v1";
 
-import "heartbeat.proto";
-import "pipeline.proto";
+import "v1/common.proto";
 
-service MalouServer {
+// Heartbeat
+message HeartbeatReq {
+  string token = 1;
+  repeated double cpu_percent = 2;
+  MemoryInfo memory_info = 3;
+  DiskInfo disk_info = 4;
+  map<string, string> worker_status = 5;
+}
+
+message HeartbeatResp {
+  int64 timestamp = 1;
+  string message = 2;
+}
+
+// PullPipeline
+message PullPipelineReq {
+
+}
+
+message PullPipelineResp {
+  string pipeline_id = 1;
+  string message = 2;
+  Pipeline pipeline = 3;
+}
+
+message ReportPipelineLogResp {
+  int64 timestamp = 1;
+  string message = 2;
+}
+
+service Malou {
   // 心跳请
   rpc Heartbeat(HeartbeatReq) returns (HeartbeatResp) {}
   // 拉取流水线任务
   rpc PullPipeline(PullPipelineReq) returns (PullPipelineResp) {}
   // 回显执行结果
-  rpc ReportPipelineLog(stream ReportPipelineLogReq) returns (ReportPipelineLogResp) {}
+  rpc ReportPipelineLog(stream PipelineLog) returns (ReportPipelineLogResp) {}
 }

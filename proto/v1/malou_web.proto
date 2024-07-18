@@ -1,0 +1,62 @@
+syntax = "proto3";
+
+option go_package = "./proto/v1";
+
+import "v1/common.proto";
+import "google/api/annotations.proto";
+
+// RunnerInfo
+message RunnerInfoReq {
+  string runner_id = 1;
+}
+
+// RunnerList
+message RunnerListReq {
+  int64 size = 1;
+  int64 page = 2;
+  string name = 3;
+  repeated string labels = 4;
+}
+
+message RunnerInfo {
+  repeated double cpu_percent = 2;
+  MemoryInfo memory_info = 3;
+  DiskInfo disk_info = 4;
+  map<string, string> worker_status = 5;
+}
+
+message RunnerListResp {
+  int64 total = 1;
+  repeated RunnerInfo data = 2;
+}
+
+// PipelineLogList
+message PipelineLogListReq {
+  string pipeline_id = 1;
+  int64 index = 2;
+}
+
+message PipelineLogListResp {
+  repeated PipelineLog log = 1;
+}
+
+service MalouWeb {
+  rpc RunnerInfo(RunnerInfoReq) returns (RunnerListResp) {
+    option (google.api.http) = {
+      get: "/v1/runner/{runner_id}/info",
+    };
+  }
+
+  rpc RunnerList(RunnerListReq) returns (RunnerListResp) {
+    option (google.api.http) = {
+      post: "/v1/runner/list",
+      body: "*"
+    };
+  }
+
+  rpc PipelineLogList(PipelineLogListReq) returns (PipelineLogListResp) {
+    option (google.api.http) = {
+      get: "/v1/pull/{pipeline_id}/log/{index}",
+    };
+  }
+}

@@ -5,6 +5,8 @@ import (
 	"context"
 	"github.com/hl540/malou/internal/runner/container_runtime"
 	"github.com/hl540/malou/proto/v1"
+	"golang.org/x/text/encoding/simplifiedchinese"
+	"golang.org/x/text/transform"
 	"log"
 )
 
@@ -47,9 +49,11 @@ func (e *BaseStepExecutor) Execute(ctx context.Context, step *v1.Step, workDir s
 			return err
 		}
 		// 逐行读取log
+		out = transform.NewReader(out, simplifiedchinese.GB18030.NewDecoder())
 		scanner := bufio.NewScanner(out)
 		for scanner.Scan() {
-			e.reportLog.WithStep(step.Name).WithCmd(cmd).Log(scanner.Text())
+			text := scanner.Text()
+			e.reportLog.WithStep(step.Name).WithCmd(cmd).Log(text)
 		}
 	}
 	return nil

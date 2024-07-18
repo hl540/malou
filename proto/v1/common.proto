@@ -2,8 +2,18 @@ syntax = "proto3";
 
 option go_package = "./proto/v1";
 
-message PullPipelineReq {
+message MemoryInfo {
+  uint64 total = 1;
+  uint64 used = 2;
+  uint64 free = 3;
+  double used_percent = 4;
+}
 
+message DiskInfo {
+  uint64 total = 1;
+  uint64 used = 2;
+  uint64 free = 3;
+  double used_percent = 4;
 }
 
 message Step {
@@ -19,30 +29,19 @@ message Pipeline {
   repeated Step steps = 4;
 }
 
-message PullPipelineResp {
-  string pipeline_id = 1;
-  string message = 2;
-  Pipeline pipeline = 3;
-}
-
-enum ReportType {
+enum PipelineLogType {
   LOG = 0;
   STEP = 1;
   ERROR = 2;
   DONE = 3;
 }
 
-message ReportPipelineLogReq {
+message PipelineLog {
   string pipeline_id = 1;
-  ReportType type = 2;
+  PipelineLogType type = 2;
   string step = 3;
   string cmd = 4;
   string message = 5;
   int64 timestamp = 6;
   int64 duration = 7;
-}
-
-message ReportPipelineLogResp {
-  int64 timestamp = 1;
-  string message = 2;
 }

@@ -8,17 +8,20 @@ import (
 	"github.com/hl540/malou/internal/runner/worker"
 	"github.com/hl540/malou/proto/v1"
 	"github.com/hl540/malou/utils"
+	"github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 	"path"
 	"time"
 )
 
+var Logger = logrus.New()
+
 type Runner struct {
 	Token        string
 	Config       *Config
 	DockerClient *client.Client
-	MalouClient  v1.MalouServerClient
+	MalouClient  v1.MalouClient
 }
 
 func NewRunner(conf *Config) (*Runner, error) {
@@ -39,7 +42,7 @@ func NewRunner(conf *Config) (*Runner, error) {
 	if err != nil {
 		return nil, fmt.Errorf("initialize server grpc client failed, %s", err.Error())
 	}
-	app.MalouClient = v1.NewMalouServerClient(conn)
+	app.MalouClient = v1.NewMalouClient(conn)
 
 	return app, nil
 }

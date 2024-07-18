@@ -1,6 +1,6 @@
 Token: "xxxxx"
 ServerAddress: 127.0.0.1:5555
-HeartbeatFrequency: 10
+HeartbeatFrequency: 15
 PullPipelineFrequency: 5
 WorkerPoolSize: 3
 WorkDir: C:\Users\67440\go\src\malou\work
