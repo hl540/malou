@@ -68,7 +68,7 @@ func (c *malouWebClient) PipelineLogList(ctx context.Context, in *PipelineLogLis
 	return out, nil
 }
 
-// MalouWebServer is the server API for MalouWeb service.
+// MalouWebServer is the runner_server API for MalouWeb service.
 // All implementations must embed UnimplementedMalouWebServer
 // for forward compatibility
 type MalouWebServer interface {

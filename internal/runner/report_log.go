@@ -3,6 +3,7 @@ package runner
 import (
 	"fmt"
 	v1 "github.com/hl540/malou/proto/v1"
+	"github.com/sirupsen/logrus"
 	"time"
 )
 
@@ -40,7 +41,7 @@ func (l *ReportLog) WithCmd(cmd string) *ReportLog {
 
 func (l *ReportLog) Send(req *v1.PipelineLog) {
 	if l.reportStream == nil {
-		Logger.Infof("%v", req)
+		logrus.Infof("%v", req)
 		return
 	}
 	if req != nil {
@@ -52,7 +53,7 @@ func (l *ReportLog) Send(req *v1.PipelineLog) {
 	}
 	if l.reportStream != nil {
 		if err := l.reportStream.Send(req); err != nil {
-			Logger.Errorf("Failed to report log, %s", err.Error())
+			logrus.Errorf("Failed to report log, %s", err.Error())
 		}
 	}
 }

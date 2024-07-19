@@ -15,8 +15,6 @@ import (
 	"time"
 )
 
-var Logger = logrus.New()
-
 type Runner struct {
 	Token        string
 	Config       *Config
@@ -38,9 +36,12 @@ func NewRunner(conf *Config) (*Runner, error) {
 	}
 
 	// 初始化服务器grpc client
-	conn, err := grpc.NewClient(conf.ServerAddress, grpc.WithTransportCredentials(insecure.NewCredentials()))
+	conn, err := grpc.NewClient(
+		fmt.Sprintf("%s:%d", conf.ServerHost, conf.ServerPort),
+		grpc.WithTransportCredentials(insecure.NewCredentials()),
+	)
 	if err != nil {
-		return nil, fmt.Errorf("initialize server grpc client failed, %s", err.Error())
+		return nil, fmt.Errorf("initialize runner_server grpc client failed, %s", err.Error())
 	}
 	app.MalouClient = v1.NewMalouClient(conn)
 
@@ -74,17 +75,17 @@ func (a *Runner) Heartbeat(ctx context.Context) {
 		WorkerStatus: worker.Pool.Status(),
 	})
 	if err != nil {
-		Logger.WithContext(ctx).Errorf("[Heartbeat] request failed, err: %s", err.Error())
+		logrus.WithContext(ctx).Errorf("[Heartbeat] request failed, err: %s", err.Error())
 		return
 	}
-	Logger.WithContext(ctx).Infof("[Heartbeat] %d %s", heartbeatResp.Timestamp, heartbeatResp.Message)
+	logrus.WithContext(ctx).Infof("[Heartbeat] %d %s", heartbeatResp.Timestamp, heartbeatResp.Message)
 }
 
 func (a *Runner) PullPipeline(ctx context.Context) {
 	// 尝试获取work
 	workID := worker.Pool.TryWorker()
 	if workID == "" {
-		Logger.WithContext(ctx).Info("[PullPipeline] there are no idle worker")
+		logrus.WithContext(ctx).Info("[PullPipeline] there are no idle worker")
 		return
 	}
 
@@ -93,18 +94,18 @@ func (a *Runner) PullPipeline(ctx context.Context) {
 	if err != nil {
 		// 归还worker
 		worker.Pool.Release(workID)
-		Logger.WithContext(ctx).Errorf("[PullPipeline] request failed, err: %s", err.Error())
+		logrus.WithContext(ctx).Errorf("[PullPipeline] request failed, err: %s", err.Error())
 		return
 	}
 	if pullPipelineResp.PipelineId == "" {
 		// 归还worker
 		worker.Pool.Release(workID)
-		Logger.WithContext(ctx).Infof("[PullPipeline] No pull, %s", pullPipelineResp.Message)
+		logrus.WithContext(ctx).Infof("[PullPipeline] No pull, %s", pullPipelineResp.Message)
 		return
 	}
 	// 使用拉取到的PipelineID填充work
 	if !worker.Pool.Worker(workID, pullPipelineResp.PipelineId) {
-		Logger.WithContext(ctx).Info("[PullPipeline] worker don't exist")
+		logrus.WithContext(ctx).Info("[PullPipeline] worker don't exist")
 		return
 	}
 	newCtx := context.Background()
@@ -119,7 +120,7 @@ func (a *Runner) ExecutePipeline(ctx context.Context, pipelineID string, pipelin
 	// 创建stream，回传执行过程log
 	reportStream, err := a.MalouClient.ReportPipelineLog(ctx)
 	if err != nil {
-		Logger.WithContext(ctx).Errorf("Failed to create report stream, %s", err.Error())
+		logrus.WithContext(ctx).Errorf("Failed to create report stream, %s", err.Error())
 	}
 	defer reportStream.CloseAndRecv()
 	reportLog := NewReportLog(pipelineID, reportStream)

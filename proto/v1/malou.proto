@@ -4,6 +4,15 @@ option go_package = "./proto/v1";
 
 import "v1/common.proto";
 
+// RegisterRunner
+message RegisterRunnerReq {
+
+}
+
+message RegisterRunnerResp {
+
+}
+
 // Heartbeat
 message HeartbeatReq {
   string token = 1;
@@ -35,6 +44,8 @@ message ReportPipelineLogResp {
 }
 
 service Malou {
+  // 心跳请
+  rpc RegisterRunner(RegisterRunnerReq) returns (RegisterRunnerResp) {}
   // 心跳请
   rpc Heartbeat(HeartbeatReq) returns (HeartbeatResp) {}
   // 拉取流水线任务

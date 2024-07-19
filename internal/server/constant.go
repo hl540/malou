@@ -1,10 +1,9 @@
-package runner
+package server
 
 const (
 	ConfigNameEnvKey            = "CONFIG_NAME"
 	TokenEnvKey                 = "TOKEN"
-	ServerHostEnvKey            = "SERVER_HOST"
-	ServerPortEnvKey            = "SERVER_PORT"
+	ServerAddressEnvKey         = "SERVER_ADDRESS"
 	HeartbeatFrequencyEnvKey    = "HEARTBEAT_FREQUENCY"
 	PullPipelineFrequencyEnvKey = "PULL_PIPELINE_FREQUENCY"
 	WorkerPoolSizeEnvKey        = "WORKER_POOL_SIZE"

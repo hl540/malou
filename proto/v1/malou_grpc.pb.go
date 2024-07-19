@@ -96,7 +96,7 @@ func (x *malouReportPipelineLogClient) CloseAndRecv() (*ReportPipelineLogResp, e
 	return m, nil
 }
 
-// MalouServer is the server API for Malou service.
+// MalouServer is the runner_server API for Malou service.
 // All implementations must embed UnimplementedMalouServer
 // for forward compatibility
 type MalouServer interface {

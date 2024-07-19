@@ -2,13 +2,16 @@ package runner
 
 import (
 	"github.com/hl540/malou/utils"
+	"github.com/joho/godotenv"
+	"github.com/sirupsen/logrus"
 	"gopkg.in/yaml.v3"
 	"os"
 )
 
 type Config struct {
 	Token                 string `yaml:"Token"`                 // 认证token
-	ServerAddress         string `yaml:"ServerAddress"`         // 服务地址（带端口号）
+	ServerHost            string `yaml:"ServerHost"`            // 服务地址
+	ServerPort            int    `yaml:"ServerPort"`            // 服务端口
 	HeartbeatFrequency    int64  `yaml:"HeartbeatFrequency"`    // 心跳频率（秒）
 	PullPipelineFrequency int64  `yaml:"PullPipelineFrequency"` // 拉取流水线任务频率（秒）
 	WorkerPoolSize        int    `yaml:"WorkerPoolSize"`        // 工作池大小，最大同时执行pipeline的数量
@@ -31,9 +34,15 @@ func LoadConfig() (*Config, error) {
 		return nil, err
 	}
 
+	//加载环境变量
+	if err := godotenv.Load(); err != nil {
+		logrus.Warning("Didn't try and open .env by default")
+	}
+
 	// 最终生效配置为环境变量
 	config.Token = utils.GetEnvDefault(TokenEnvKey, config.Token)
-	config.ServerAddress = utils.GetEnvDefault(ServerAddressEnvKey, config.ServerAddress)
+	config.ServerHost = utils.GetEnvDefault(ServerHostEnvKey, config.ServerHost)
+	config.ServerPort = utils.GetEnvDefault(ServerPortEnvKey, config.ServerPort)
 	config.HeartbeatFrequency = utils.GetEnvDefault(HeartbeatFrequencyEnvKey, config.HeartbeatFrequency)
 	config.PullPipelineFrequency = utils.GetEnvDefault(PullPipelineFrequencyEnvKey, config.PullPipelineFrequency)
 	config.WorkerPoolSize = utils.GetEnvDefault(WorkerPoolSizeEnvKey, config.WorkerPoolSize)

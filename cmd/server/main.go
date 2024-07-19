@@ -2,8 +2,12 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"github.com/hl540/malou/internal/server"
+	"github.com/hl540/malou/internal/server/runner_server"
+	"github.com/hl540/malou/internal/server/storage"
+	"github.com/hl540/malou/internal/server/web_server"
 	"github.com/hl540/malou/proto/v1"
 	"github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
@@ -17,19 +21,32 @@ import (
 var Logger = logrus.New()
 
 func main() {
+	// 加载配置
+	config, err := server.LoadConfig()
+	if err != nil {
+		panic(err)
+	}
+
+	// 初始化数据库
+	mongoClient, err := storage.InitMongo(config)
+	if err != nil {
+		panic(err)
+	}
+
 	ctx, stop := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
 	defer stop()
 
-	lis, err := net.Listen("tcp", ":5555")
+	grpcAddress := fmt.Sprintf("%s:%d", config.GrpcHost, config.GrpcPort)
+	lis, err := net.Listen("tcp", grpcAddress)
 	if err != nil {
 		panic(err)
 	}
 
 	s := grpc.NewServer()
-	v1.RegisterMalouServer(s, &server.Server{})
-	v1.RegisterMalouWebServer(s, &server.WebServer{})
+	v1.RegisterMalouServer(s, &runner_server.RunnerServer{})
+	v1.RegisterMalouWebServer(s, &web_server.WebServer{})
 
-	Logger.WithContext(ctx).Info("Serving gRPC on 0.0.0.0:5555")
+	Logger.WithContext(ctx).Infof("Serving gRPC on %s", grpcAddress)
 	go func() {
 		if err := s.Serve(lis); err != nil {
 			Logger.WithContext(ctx).Errorf("Failed to listen %s", err.Error())
@@ -37,7 +54,7 @@ func main() {
 	}()
 
 	// 创建grpc client
-	conn, err := grpc.NewClient("0.0.0.0:5555", grpc.WithTransportCredentials(insecure.NewCredentials()))
+	conn, err := grpc.NewClient(grpcAddress, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		panic(err)
 	}
@@ -47,8 +64,12 @@ func main() {
 		panic(err)
 	}
 
-	gwServer := &http.Server{Addr: ":6666", Handler: mux}
-	Logger.WithContext(ctx).Info("Serving gRPC-Gateway on http://0.0.0.0:6666")
+	httpAddress := fmt.Sprintf("%s:%d", config.HttpHost, config.HttpPort)
+	gwServer := &http.Server{
+		Addr:    httpAddress,
+		Handler: mux,
+	}
+	Logger.WithContext(ctx).Infof("Serving gRPC-Gateway on http://%s", httpAddress)
 	go func() {
 		if err := gwServer.ListenAndServe(); err != nil {
 			Logger.WithContext(ctx).Errorf("Failed to listen %s", err.Error())
@@ -56,5 +77,7 @@ func main() {
 	}()
 
 	<-ctx.Done()
-	Logger.WithContext(ctx).Infof("Server stop")
+
+	mongoClient.Disconnect(context.Background())
+	Logger.WithContext(ctx).Infof("RunnerServer stop")
 }
