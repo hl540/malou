@@ -25,7 +25,6 @@ func NewBaseStepExecutor(cr container_runtime.ContainerRuntime, reportLog *Repor
 }
 
 func (e *BaseStepExecutor) Execute(ctx context.Context, step *v1.Step, workDir string) error {
-	e.reportLog.WithStep(step.Name).Log("start executing step [%s]", step.Name)
 	// 创建容器
 	containerID, err := e.cr.Create(ctx, step.Image, nil, workDir)
 	if err != nil {
@@ -40,7 +39,6 @@ func (e *BaseStepExecutor) Execute(ctx context.Context, step *v1.Step, workDir s
 
 	// 多个命令Attach的方式依次执行
 	for _, cmd := range step.Commands {
-		e.reportLog.WithStep(step.Name).WithCmd(cmd).Log("start executing cmd [%s]", cmd)
 		out, err := e.cr.AttachExec(ctx, containerID, cmd)
 		// 执行随便清理容器
 		if err != nil {

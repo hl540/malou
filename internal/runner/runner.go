@@ -11,12 +11,14 @@ import (
 	"github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
+	"os"
 	"path"
 	"time"
 )
 
 type Runner struct {
 	Token        string
+	Jwt          string
 	Config       *Config
 	DockerClient *client.Client
 	MalouClient  v1.MalouClient
@@ -65,6 +67,24 @@ func (a *Runner) Run(ctx context.Context) {
 	}
 }
 
+func (a *Runner) Register(ctx context.Context) error {
+	content, err := os.ReadFile(a.Config.JwtFile)
+	if err == nil && len(content) > 0 {
+		a.Jwt = string(content)
+		return nil
+	}
+	// 重新注册
+	register, err := a.MalouClient.RegisterRunner(ctx, &v1.RegisterRunnerReq{Token: a.Token})
+	if err != nil {
+		return err
+	}
+	a.Jwt = register.Jwt
+	if err := os.WriteFile(a.Config.JwtFile, []byte(register.Jwt), 0644); err != nil {
+		logrus.WithContext(ctx).Warningf("Failed to save the jwt and started re-registration again，%s", err.Error())
+	}
+	return nil
+}
+
 // Heartbeat 心跳，与服务端保持联系，并拉取服务端指令
 func (a *Runner) Heartbeat(ctx context.Context) {
 	heartbeatResp, err := a.MalouClient.Heartbeat(ctx, &v1.HeartbeatReq{
@@ -77,6 +97,10 @@ func (a *Runner) Heartbeat(ctx context.Context) {
 	if err != nil {
 		logrus.WithContext(ctx).Errorf("[Heartbeat] request failed, err: %s", err.Error())
 		return
+	}
+	// 更新
+	if heartbeatResp.Jwt != "" {
+		a.Jwt = heartbeatResp.Jwt
 	}
 	logrus.WithContext(ctx).Infof("[Heartbeat] %d %s", heartbeatResp.Timestamp, heartbeatResp.Message)
 }
@@ -135,7 +159,6 @@ func (a *Runner) ExecutePipeline(ctx context.Context, pipelineID string, pipelin
 	// 工作目录，需要挂载到容器中
 	workDir := path.Join(a.Config.WorkDir, pipelineID)
 
-	reportLog.Log("start executing pipeline [%s],[%s]", pipeline.Name, pipelineID)
 	for _, step := range pipeline.Steps {
 		// 创建step执行器
 		stepExecutor := NewBaseStepExecutor(containerRuntime, reportLog)

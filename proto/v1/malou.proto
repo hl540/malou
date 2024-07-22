@@ -6,11 +6,11 @@ import "v1/common.proto";
 
 // RegisterRunner
 message RegisterRunnerReq {
-
+  string token = 1;
 }
 
 message RegisterRunnerResp {
-
+  string jwt = 1;
 }
 
 // Heartbeat
@@ -25,6 +25,7 @@ message HeartbeatReq {
 message HeartbeatResp {
   int64 timestamp = 1;
   string message = 2;
+  string jwt = 3;
 }
 
 // PullPipeline

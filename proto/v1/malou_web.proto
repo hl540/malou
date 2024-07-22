@@ -5,6 +5,16 @@ option go_package = "./proto/v1";
 import "v1/common.proto";
 import "google/api/annotations.proto";
 
+// CreateRunner
+message CreateRunnerReq {
+  string name = 1;
+  repeated string labels = 2;
+}
+
+message CreateRunnerResp {
+  string token = 1;
+}
+
 // RunnerInfo
 message RunnerInfoReq {
   string runner_id = 1;
@@ -33,7 +43,7 @@ message RunnerListResp {
 // PipelineLogList
 message PipelineLogListReq {
   string pipeline_id = 1;
-  int64 index = 2;
+  int64 offset = 2;
 }
 
 message PipelineLogListResp {
@@ -41,6 +51,13 @@ message PipelineLogListResp {
 }
 
 service MalouWeb {
+  rpc CreateRunner(CreateRunnerReq) returns (CreateRunnerResp) {
+    option (google.api.http) = {
+      post: "/v1/runner/create",
+      body: "*"
+    };
+  }
+
   rpc RunnerInfo(RunnerInfoReq) returns (RunnerListResp) {
     option (google.api.http) = {
       get: "/v1/runner/{runner_id}/info",
@@ -56,7 +73,10 @@ service MalouWeb {
 
   rpc PipelineLogList(PipelineLogListReq) returns (PipelineLogListResp) {
     option (google.api.http) = {
-      get: "/v1/pull/{pipeline_id}/log/{index}",
+      get: "/v1/pipeline_log/{pipeline_id}/{offset}",
+      additional_bindings: {
+        get: "/v1/pipeline_log/{pipeline_id}",
+      }
     };
   }
 }

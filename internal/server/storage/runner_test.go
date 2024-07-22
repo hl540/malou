@@ -3,7 +3,6 @@ package storage
 import (
 	"context"
 	"github.com/hl540/malou/internal/server"
-	"github.com/hl540/malou/utils"
 	"testing"
 )
 
@@ -47,13 +46,7 @@ func TestAddRunner(t *testing.T) {
 		MongoDatabase: "malou",
 	})
 	t.Run("TestAddRunner", func(t *testing.T) {
-		got, err := AddRunner(context.Background(), &Runner{
-			Name: utils.StringWithCharsetV4(15),
-			Labels: []string{
-				"l" + utils.StringWithCharsetV1(1),
-				"l" + utils.StringWithCharsetV1(1),
-			},
-		})
+		got, err := AddRunner(context.Background(), "runner_1", []string{"l1", "l2"})
 		if err != nil {
 			t.Errorf("GetRunnerList() error = %v", err)
 			return

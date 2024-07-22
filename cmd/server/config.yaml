@@ -1,6 +1,6 @@
 HttpHost: 0.0.0.0
-HttpPort: 5555
+HttpPort: 6666
 GrpcHost: 0.0.0.0
-GrpcPort: 6666
+GrpcPort: 5555
 MongoUri: mongodb://localhost:27017
 MongoDatabase: malou

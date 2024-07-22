@@ -9,7 +9,8 @@ import (
 )
 
 type Config struct {
-	Token                 string `yaml:"Token"`                 // 认证token
+	Token                 string `yaml:"Token"`                 // token
+	JwtFile               string `yaml:"JwtFile"`               // 注册完成后生成的jwt
 	ServerHost            string `yaml:"ServerHost"`            // 服务地址
 	ServerPort            int    `yaml:"ServerPort"`            // 服务端口
 	HeartbeatFrequency    int64  `yaml:"HeartbeatFrequency"`    // 心跳频率（秒）
@@ -41,6 +42,7 @@ func LoadConfig() (*Config, error) {
 
 	// 最终生效配置为环境变量
 	config.Token = utils.GetEnvDefault(TokenEnvKey, config.Token)
+	config.JwtFile = utils.GetEnvDefault(JwtFileEnvKey, config.JwtFile)
 	config.ServerHost = utils.GetEnvDefault(ServerHostEnvKey, config.ServerHost)
 	config.ServerPort = utils.GetEnvDefault(ServerPortEnvKey, config.ServerPort)
 	config.HeartbeatFrequency = utils.GetEnvDefault(HeartbeatFrequencyEnvKey, config.HeartbeatFrequency)
@@ -49,11 +51,18 @@ func LoadConfig() (*Config, error) {
 	config.WorkDir = utils.GetEnvDefault(WorkDirEnvKey, config.WorkDir)
 
 	// 默认值
+	if config.ServerPort == 0 {
+		config.ServerPort = ServerPortDefault
+	}
+	if config.JwtFile == "" {
+		config.JwtFile = JwtFileDefault
+	}
 	if config.HeartbeatFrequency == 0 {
 		config.HeartbeatFrequency = HeartbeatFrequencyDefault
 	}
 	if config.PullPipelineFrequency == 0 {
 		config.PullPipelineFrequency = PullPipelineFrequencyDefault
 	}
+
 	return &config, nil
 }

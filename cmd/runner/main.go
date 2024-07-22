@@ -13,7 +13,7 @@ func main() {
 	// 加载配置
 	config, err := runner.LoadConfig()
 	if err != nil {
-		panic(err)
+		logrus.Fatalf("configuration loading failed, %s", err.Error())
 	}
 
 	ctx, stop := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
@@ -25,7 +25,12 @@ func main() {
 
 	app, err := runner.NewRunner(config)
 	if err != nil {
-		panic(err)
+		logrus.Fatalf("runner creation failed, %s", err.Error())
+	}
+
+	// 注册
+	if err := app.Register(ctx); err != nil {
+		logrus.Fatalf("runner registration failed, %s", err.Error())
 	}
 
 	logrus.WithContext(ctx).Infof("runner runing...")

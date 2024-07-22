@@ -3,6 +3,7 @@ package runner
 const (
 	ConfigNameEnvKey            = "CONFIG_NAME"
 	TokenEnvKey                 = "TOKEN"
+	JwtFileEnvKey               = "JWT_FILE"
 	ServerHostEnvKey            = "SERVER_HOST"
 	ServerPortEnvKey            = "SERVER_PORT"
 	HeartbeatFrequencyEnvKey    = "HEARTBEAT_FREQUENCY"
@@ -11,5 +12,7 @@ const (
 	WorkDirEnvKey               = "WORK_DIR"
 )
 
+const ServerPortDefault = 5555
+const JwtFileDefault = ".jwt"
 const HeartbeatFrequencyDefault = 30
 const PullPipelineFrequencyDefault = 15

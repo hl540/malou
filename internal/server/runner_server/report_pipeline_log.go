@@ -1,8 +1,9 @@
 package runner_server
 
 import (
-	"fmt"
+	"github.com/hl540/malou/internal/server/storage"
 	v1 "github.com/hl540/malou/proto/v1"
+	"github.com/sirupsen/logrus"
 	"io"
 	"time"
 )
@@ -17,9 +18,20 @@ func (s *RunnerServer) ReportPipelineLog(stream v1.Malou_ReportPipelineLogServer
 			})
 		}
 		if err != nil {
-			fmt.Println(err.Error())
+			logrus.WithContext(stream.Context()).Errorf(err.Error())
 			return err
 		}
-		fmt.Println(reportLog.Message)
+		err = storage.AddPipelineLog(stream.Context(), &storage.PipelineLog{
+			PipelineID: reportLog.PipelineId,
+			Step:       reportLog.Step,
+			Cmd:        reportLog.Cmd,
+			Message:    reportLog.Message,
+			Type:       reportLog.Type.String(),
+			Timestamp:  reportLog.Timestamp,
+			Duration:   reportLog.Duration,
+		})
+		if err != nil {
+			logrus.WithContext(stream.Context()).Errorf("[AddPipelineLog] err: %s", err.Error())
+		}
 	}
 }

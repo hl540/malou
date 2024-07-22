@@ -41,7 +41,7 @@ var pipeline = &v1.Pipeline{
 	},
 }
 
-var t = time.NewTicker(1 * time.Second)
+var t = time.NewTicker(5 * time.Second)
 
 func (s *RunnerServer) PullPipeline(ctx context.Context, req *v1.PullPipelineReq) (*v1.PullPipelineResp, error) {
 	select {
