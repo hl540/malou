@@ -4,13 +4,15 @@ import (
 	"context"
 	"github.com/google/uuid"
 	"github.com/hl540/malou/utils"
+	"github.com/pkg/errors"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 type Runner struct {
 	ID     string   `bson:"id"`
-	Secret string   `bson:"secret"`
+	Key    string   `bson:"key"`
 	Name   string   `bson:"name"`
 	Labels []string `bson:"labels"`
 }
@@ -18,7 +20,7 @@ type Runner struct {
 func AddRunner(ctx context.Context, name string, labels []string) (string, error) {
 	runner := &Runner{
 		ID:     uuid.New().String(),
-		Secret: utils.StringWithCharsetV4(20),
+		Key:    utils.StringWithCharsetV4(20),
 		Name:   name,
 		Labels: labels,
 	}
@@ -72,5 +74,8 @@ func GetRunnerList(ctx context.Context, option *RunnerListOption) ([]*Runner, in
 func GetRunnerByID(ctx context.Context, runnerID string) (*Runner, error) {
 	var result Runner
 	err := RunnerColl.FindOne(ctx, bson.D{{"id", runnerID}}).Decode(&result)
+	if err != nil && errors.Is(err, mongo.ErrNoDocuments) {
+		return nil, errors.Errorf("runner %s does not exist", runnerID)
+	}
 	return &result, err
 }

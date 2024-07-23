@@ -11,10 +11,7 @@ func (s *RunnerServer) ReportPipelineLog(stream v1.Malou_ReportPipelineLogServer
 	for {
 		reportLog, err := stream.Recv()
 		if err == io.EOF {
-			return stream.SendAndClose(&v1.ReportPipelineLogResp{
-				Code:    0,
-				Message: "success",
-			})
+			return stream.SendAndClose(&v1.ReportPipelineLogResp{})
 		}
 		if err != nil {
 			logrus.WithContext(stream.Context()).Errorf(err.Error())

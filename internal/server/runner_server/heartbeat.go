@@ -7,5 +7,5 @@ import (
 
 func (s *RunnerServer) Heartbeat(ctx context.Context, req *v1.HeartbeatReq) (*v1.HeartbeatResp, error) {
 	//Logger.WithContext(ctx).Infof("[Heartbeat] %v", req)
-	return &v1.HeartbeatResp{Code: 0, Message: "Received"}, nil
+	return &v1.HeartbeatResp{}, nil
 }

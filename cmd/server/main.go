@@ -18,8 +18,6 @@ import (
 	"syscall"
 )
 
-var Logger = logrus.New()
-
 func main() {
 	// 加载配置
 	config, err := server.LoadConfig()
@@ -46,10 +44,10 @@ func main() {
 	v1.RegisterMalouServer(s, &runner_server.RunnerServer{})
 	v1.RegisterMalouWebServer(s, &web_server.WebServer{})
 
-	Logger.WithContext(ctx).Infof("Serving gRPC on %s", grpcAddress)
+	logrus.WithContext(ctx).Infof("Serving gRPC on %s", grpcAddress)
 	go func() {
 		if err := s.Serve(lis); err != nil {
-			Logger.WithContext(ctx).Errorf("Failed to listen %s", err.Error())
+			logrus.WithContext(ctx).Errorf("Failed to listen %s", err.Error())
 		}
 	}()
 
@@ -69,15 +67,17 @@ func main() {
 		Addr:    httpAddress,
 		Handler: mux,
 	}
-	Logger.WithContext(ctx).Infof("Serving gRPC-Gateway on http://%s", httpAddress)
+	logrus.WithContext(ctx).Infof("Serving gRPC-Gateway on http://%s", httpAddress)
 	go func() {
 		if err := gwServer.ListenAndServe(); err != nil {
-			Logger.WithContext(ctx).Errorf("Failed to listen %s", err.Error())
+			logrus.WithContext(ctx).Errorf("Failed to listen %s", err.Error())
 		}
 	}()
 
 	<-ctx.Done()
 
-	mongoClient.Disconnect(context.Background())
-	Logger.WithContext(ctx).Infof("RunnerServer stop")
+	if err := mongoClient.Disconnect(context.Background()); err != nil {
+		logrus.WithContext(ctx).Errorf("mongo disconnect %s", err.Error())
+	}
+	logrus.WithContext(ctx).Infof("RunnerServer stop")
 }

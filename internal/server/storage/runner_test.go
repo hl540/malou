@@ -46,7 +46,7 @@ func TestAddRunner(t *testing.T) {
 		MongoDatabase: "malou",
 	})
 	t.Run("TestAddRunner", func(t *testing.T) {
-		got, err := AddRunner(context.Background(), "runner_1", []string{"l1", "l2"})
+		got, err := AddRunner(context.Background(), "runner_1", []string{"test", "docker"})
 		if err != nil {
 			t.Errorf("GetRunnerList() error = %v", err)
 			return

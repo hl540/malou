@@ -12,9 +12,7 @@ message CreateRunnerReq {
 }
 
 message CreateRunnerResp {
-  int32 code = 1;
-  string message = 2;
-  string token = 3;
+  string token = 1;
 }
 
 // RunnerInfo
@@ -23,8 +21,6 @@ message RunnerInfoReq {
 }
 
 message RunnerInfoResp {
-  int32 code = 1;
-  string message = 2;
 }
 
 // RunnerList
@@ -43,10 +39,8 @@ message RunnerInfo {
 }
 
 message RunnerListResp {
-  int32 code = 1;
-  string message = 2;
-  int64 total = 3;
-  repeated RunnerInfo data = 4;
+  int64 total = 1;
+  repeated RunnerInfo data = 2;
 }
 
 // PipelineLogList
@@ -56,9 +50,7 @@ message PipelineLogListReq {
 }
 
 message PipelineLogListResp {
-  int32 code = 1;
-  string message = 2;
-  repeated PipelineLog log = 3;
+  repeated PipelineLog log = 1;
 }
 
 service MalouWeb {

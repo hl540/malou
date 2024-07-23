@@ -1,7 +1,7 @@
-Token: "xxxxx"
+Token: e49545f1-4808-423a-a375-8fd9f00fdc84
 ServerHost: 127.0.0.1
 ServerPort: 5555
-HeartbeatFrequency: 15
-PullPipelineFrequency: 10
+HeartbeatFrequency: 30
+PullPipelineFrequency: 15
 WorkerPoolSize: 2
 WorkDir: C:\Users\67440\go\src\malou\work

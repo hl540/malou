@@ -10,9 +10,7 @@ message RegisterRunnerReq {
 }
 
 message RegisterRunnerResp {
-  int32 code = 1;
-  string message = 2;
-  string jwt = 3;
+  string jwt = 1;
 }
 
 // Heartbeat
@@ -25,9 +23,7 @@ message HeartbeatReq {
 }
 
 message HeartbeatResp {
-  int32 code = 1;
-  string message = 2;
-  string jwt = 3;
+  string jwt = 1;
 }
 
 // PullPipeline
@@ -36,15 +32,11 @@ message PullPipelineReq {
 }
 
 message PullPipelineResp {
-  int32 code = 1;
-  string message = 2;
-  string pipeline_id = 3;
-  Pipeline pipeline = 4;
+  string pipeline_id = 1;
+  Pipeline pipeline = 2;
 }
 
 message ReportPipelineLogResp {
-  int32 code = 1;
-  string message = 2;
 }
 
 service Malou {

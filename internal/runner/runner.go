@@ -50,6 +50,7 @@ func NewRunner(conf *Config) (*Runner, error) {
 	return app, nil
 }
 
+// Run 启动runner
 func (a *Runner) Run(ctx context.Context) {
 	heartbeatTicker := time.NewTicker(time.Duration(a.Config.HeartbeatFrequency) * time.Second)
 	pullPipelineTicker := time.NewTicker(time.Duration(a.Config.PullPipelineFrequency) * time.Second)
@@ -67,6 +68,7 @@ func (a *Runner) Run(ctx context.Context) {
 	}
 }
 
+// Register 注册runner
 func (a *Runner) Register(ctx context.Context) error {
 	content, err := os.ReadFile(a.Config.JwtFile)
 	if err == nil && len(content) > 0 {
@@ -102,9 +104,9 @@ func (a *Runner) Heartbeat(ctx context.Context) {
 	if heartbeatResp.Jwt != "" {
 		a.Jwt = heartbeatResp.Jwt
 	}
-	logrus.WithContext(ctx).Infof("[Heartbeat] %d %s", heartbeatResp.Code, heartbeatResp.Message)
 }
 
+// PullPipeline 拉取pipeline
 func (a *Runner) PullPipeline(ctx context.Context) {
 	// 尝试获取work
 	workID := worker.Pool.TryWorker()
@@ -121,12 +123,6 @@ func (a *Runner) PullPipeline(ctx context.Context) {
 		logrus.WithContext(ctx).Errorf("[PullPipeline] request failed, err: %s", err.Error())
 		return
 	}
-	if pullPipelineResp.PipelineId == "" {
-		// 归还worker
-		worker.Pool.Release(workID)
-		logrus.WithContext(ctx).Infof("[PullPipeline] No pull, %s", pullPipelineResp.Message)
-		return
-	}
 	// 使用拉取到的PipelineID填充work
 	if !worker.Pool.Worker(workID, pullPipelineResp.PipelineId) {
 		logrus.WithContext(ctx).Info("[PullPipeline] worker don't exist")
@@ -140,6 +136,7 @@ func (a *Runner) PullPipeline(ctx context.Context) {
 	}()
 }
 
+// ExecutePipeline 执行pipeline
 func (a *Runner) ExecutePipeline(ctx context.Context, pipelineID string, pipeline *v1.Pipeline) {
 	// 创建stream，回传执行过程log
 	reportStream, err := a.MalouClient.ReportPipelineLog(ctx)
