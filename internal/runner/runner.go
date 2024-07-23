@@ -102,7 +102,7 @@ func (a *Runner) Heartbeat(ctx context.Context) {
 	if heartbeatResp.Jwt != "" {
 		a.Jwt = heartbeatResp.Jwt
 	}
-	logrus.WithContext(ctx).Infof("[Heartbeat] %d %s", heartbeatResp.Timestamp, heartbeatResp.Message)
+	logrus.WithContext(ctx).Infof("[Heartbeat] %d %s", heartbeatResp.Code, heartbeatResp.Message)
 }
 
 func (a *Runner) PullPipeline(ctx context.Context) {

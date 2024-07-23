@@ -2,6 +2,6 @@ Token: "xxxxx"
 ServerHost: 127.0.0.1
 ServerPort: 5555
 HeartbeatFrequency: 15
-PullPipelineFrequency: 5
-WorkerPoolSize: 3
+PullPipelineFrequency: 10
+WorkerPoolSize: 2
 WorkDir: C:\Users\67440\go\src\malou\work

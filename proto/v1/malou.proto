@@ -10,7 +10,9 @@ message RegisterRunnerReq {
 }
 
 message RegisterRunnerResp {
-  string jwt = 1;
+  int32 code = 1;
+  string message = 2;
+  string jwt = 3;
 }
 
 // Heartbeat
@@ -23,7 +25,7 @@ message HeartbeatReq {
 }
 
 message HeartbeatResp {
-  int64 timestamp = 1;
+  int32 code = 1;
   string message = 2;
   string jwt = 3;
 }
@@ -34,13 +36,14 @@ message PullPipelineReq {
 }
 
 message PullPipelineResp {
-  string pipeline_id = 1;
+  int32 code = 1;
   string message = 2;
-  Pipeline pipeline = 3;
+  string pipeline_id = 3;
+  Pipeline pipeline = 4;
 }
 
 message ReportPipelineLogResp {
-  int64 timestamp = 1;
+  int32 code = 1;
   string message = 2;
 }
 

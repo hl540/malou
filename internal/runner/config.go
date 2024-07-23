@@ -57,6 +57,9 @@ func LoadConfig() (*Config, error) {
 	if config.JwtFile == "" {
 		config.JwtFile = JwtFileDefault
 	}
+	if config.WorkerPoolSize == 0 {
+		config.WorkerPoolSize = WorkerPoolSizeDefault
+	}
 	if config.HeartbeatFrequency == 0 {
 		config.HeartbeatFrequency = HeartbeatFrequencyDefault
 	}

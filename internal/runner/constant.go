@@ -16,3 +16,4 @@ const ServerPortDefault = 5555
 const JwtFileDefault = ".jwt"
 const HeartbeatFrequencyDefault = 30
 const PullPipelineFrequencyDefault = 15
+const WorkerPoolSizeDefault = 2

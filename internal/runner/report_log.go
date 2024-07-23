@@ -19,6 +19,7 @@ func NewReportLog(pipelineID string, reportStream v1.Malou_ReportPipelineLogClie
 	return &ReportLog{
 		pipelineID:   pipelineID,
 		reportStream: reportStream,
+		timestamp:    time.Now().Unix(),
 	}
 }
 
@@ -27,6 +28,7 @@ func (l *ReportLog) WithStep(name string) *ReportLog {
 		pipelineID:   l.pipelineID,
 		reportStream: l.reportStream,
 		step:         name,
+		timestamp:    l.timestamp,
 	}
 }
 
@@ -36,21 +38,16 @@ func (l *ReportLog) WithCmd(cmd string) *ReportLog {
 		reportStream: l.reportStream,
 		step:         l.step,
 		cmd:          cmd,
+		timestamp:    l.timestamp,
 	}
 }
 
 func (l *ReportLog) Send(req *v1.PipelineLog) {
-	if l.reportStream == nil {
-		logrus.Infof("%v", req)
-		return
-	}
-	if req != nil {
-		req.PipelineId = l.pipelineID
-		req.Step = l.step
-		req.Cmd = l.cmd
-		req.Timestamp = time.Now().Unix()
-		req.Duration = req.Timestamp - l.timestamp
-	}
+	req.PipelineId = l.pipelineID
+	req.Step = l.step
+	req.Cmd = l.cmd
+	req.Timestamp = time.Now().Unix()
+	req.Duration = req.Timestamp - l.timestamp
 	if l.reportStream != nil {
 		if err := l.reportStream.Send(req); err != nil {
 			logrus.Errorf("Failed to report log, %s", err.Error())

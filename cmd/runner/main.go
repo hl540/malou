@@ -38,5 +38,9 @@ func main() {
 
 	<-ctx.Done()
 
+	// 等待所有worker执行完成
+	logrus.WithContext(ctx).Infof("wait for all workers to complete")
+	worker.Pool.WithDone(10)
+
 	logrus.WithContext(ctx).Infof("runner stop")
 }

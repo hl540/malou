@@ -27,7 +27,7 @@ var pipeline = &v1.Pipeline{
 				fmt.Sprintf("echo %s >> %s.txt", utils.StringWithCharsetV4(100), utils.StringWithCharsetV3(10)),
 				fmt.Sprintf("echo %s >> %s.txt", utils.StringWithCharsetV4(100), utils.StringWithCharsetV3(10)),
 				"echo $(ls -l -a) > log.txt",
-				"sleep 2",
+				"sleep 10",
 			},
 		},
 		{

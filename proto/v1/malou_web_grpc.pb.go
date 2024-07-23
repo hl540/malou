@@ -30,7 +30,7 @@ const (
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type MalouWebClient interface {
 	CreateRunner(ctx context.Context, in *CreateRunnerReq, opts ...grpc.CallOption) (*CreateRunnerResp, error)
-	RunnerInfo(ctx context.Context, in *RunnerInfoReq, opts ...grpc.CallOption) (*RunnerListResp, error)
+	RunnerInfo(ctx context.Context, in *RunnerInfoReq, opts ...grpc.CallOption) (*RunnerInfoResp, error)
 	RunnerList(ctx context.Context, in *RunnerListReq, opts ...grpc.CallOption) (*RunnerListResp, error)
 	PipelineLogList(ctx context.Context, in *PipelineLogListReq, opts ...grpc.CallOption) (*PipelineLogListResp, error)
 }
@@ -53,9 +53,9 @@ func (c *malouWebClient) CreateRunner(ctx context.Context, in *CreateRunnerReq, 
 	return out, nil
 }
 
-func (c *malouWebClient) RunnerInfo(ctx context.Context, in *RunnerInfoReq, opts ...grpc.CallOption) (*RunnerListResp, error) {
+func (c *malouWebClient) RunnerInfo(ctx context.Context, in *RunnerInfoReq, opts ...grpc.CallOption) (*RunnerInfoResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(RunnerListResp)
+	out := new(RunnerInfoResp)
 	err := c.cc.Invoke(ctx, MalouWeb_RunnerInfo_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -88,7 +88,7 @@ func (c *malouWebClient) PipelineLogList(ctx context.Context, in *PipelineLogLis
 // for forward compatibility
 type MalouWebServer interface {
 	CreateRunner(context.Context, *CreateRunnerReq) (*CreateRunnerResp, error)
-	RunnerInfo(context.Context, *RunnerInfoReq) (*RunnerListResp, error)
+	RunnerInfo(context.Context, *RunnerInfoReq) (*RunnerInfoResp, error)
 	RunnerList(context.Context, *RunnerListReq) (*RunnerListResp, error)
 	PipelineLogList(context.Context, *PipelineLogListReq) (*PipelineLogListResp, error)
 	mustEmbedUnimplementedMalouWebServer()
@@ -101,7 +101,7 @@ type UnimplementedMalouWebServer struct {
 func (UnimplementedMalouWebServer) CreateRunner(context.Context, *CreateRunnerReq) (*CreateRunnerResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateRunner not implemented")
 }
-func (UnimplementedMalouWebServer) RunnerInfo(context.Context, *RunnerInfoReq) (*RunnerListResp, error) {
+func (UnimplementedMalouWebServer) RunnerInfo(context.Context, *RunnerInfoReq) (*RunnerInfoResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method RunnerInfo not implemented")
 }
 func (UnimplementedMalouWebServer) RunnerList(context.Context, *RunnerListReq) (*RunnerListResp, error) {

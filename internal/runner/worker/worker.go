@@ -2,6 +2,7 @@ package worker
 
 import (
 	"github.com/hl540/malou/utils"
+	"github.com/sirupsen/logrus"
 	"sync"
 	"time"
 )
@@ -87,7 +88,44 @@ func (wp *WorkerPool) Release(workID string) {
 
 // Status 获取WorkerPool状态
 func (wp *WorkerPool) Status() map[string]string {
-	return wp.pool
+	// 返回副本
+	status := make(map[string]string)
+	for k, v := range wp.pool {
+		status[k] = v
+	}
+	return status
+}
+
+// WithDone 等待全部worker执行完成
+func (wp *WorkerPool) WithDone(timeout int64) {
+	withTimeout := time.NewTimer(time.Duration(timeout) * time.Second)
+	for {
+		select {
+		case <-withTimeout.C:
+			return
+		default:
+			time.Sleep(time.Second)
+			size := len(wp.pool)
+			free := wp.FreeNumber()
+			logrus.New().Infof("running workers: %d", size-free)
+			if size == free {
+				return
+			}
+		}
+	}
+}
+
+// FreeNumber 空闲的worker数量
+func (wp *WorkerPool) FreeNumber() int {
+	wp.lock.Lock()
+	defer wp.lock.Unlock()
+	number := 0
+	for _, w := range wp.pool {
+		if w == "" {
+			number++
+		}
+	}
+	return number
 }
 
 var Pool *WorkerPool

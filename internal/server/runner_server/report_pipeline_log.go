@@ -5,7 +5,6 @@ import (
 	v1 "github.com/hl540/malou/proto/v1"
 	"github.com/sirupsen/logrus"
 	"io"
-	"time"
 )
 
 func (s *RunnerServer) ReportPipelineLog(stream v1.Malou_ReportPipelineLogServer) error {
@@ -13,8 +12,8 @@ func (s *RunnerServer) ReportPipelineLog(stream v1.Malou_ReportPipelineLogServer
 		reportLog, err := stream.Recv()
 		if err == io.EOF {
 			return stream.SendAndClose(&v1.ReportPipelineLogResp{
-				Timestamp: time.Now().Unix(),
-				Message:   "success",
+				Code:    0,
+				Message: "success",
 			})
 		}
 		if err != nil {

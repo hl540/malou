@@ -12,12 +12,19 @@ message CreateRunnerReq {
 }
 
 message CreateRunnerResp {
-  string token = 1;
+  int32 code = 1;
+  string message = 2;
+  string token = 3;
 }
 
 // RunnerInfo
 message RunnerInfoReq {
   string runner_id = 1;
+}
+
+message RunnerInfoResp {
+  int32 code = 1;
+  string message = 2;
 }
 
 // RunnerList
@@ -36,8 +43,10 @@ message RunnerInfo {
 }
 
 message RunnerListResp {
-  int64 total = 1;
-  repeated RunnerInfo data = 2;
+  int32 code = 1;
+  string message = 2;
+  int64 total = 3;
+  repeated RunnerInfo data = 4;
 }
 
 // PipelineLogList
@@ -47,7 +56,9 @@ message PipelineLogListReq {
 }
 
 message PipelineLogListResp {
-  repeated PipelineLog log = 1;
+  int32 code = 1;
+  string message = 2;
+  repeated PipelineLog log = 3;
 }
 
 service MalouWeb {
@@ -58,7 +69,7 @@ service MalouWeb {
     };
   }
 
-  rpc RunnerInfo(RunnerInfoReq) returns (RunnerListResp) {
+  rpc RunnerInfo(RunnerInfoReq) returns (RunnerInfoResp) {
     option (google.api.http) = {
       get: "/v1/runner/{runner_id}/info",
     };
