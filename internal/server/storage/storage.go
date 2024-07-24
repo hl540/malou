@@ -2,6 +2,7 @@ package storage
 
 import (
 	"context"
+	"database/sql"
 	"fmt"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/hl540/malou/internal/server"
@@ -20,7 +21,6 @@ func InitDB(config *server.Config) error {
 	if err != nil {
 		return err
 	}
-
 	if err := db.Ping(); err != nil {
 		return err
 	}
@@ -28,19 +28,22 @@ func InitDB(config *server.Config) error {
 	return nil
 }
 
-type Base struct {
-	*sqlx.DB
+type Session interface {
+	sqlx.Queryer
+	sqlx.QueryerContext
+	sqlx.Execer
+	sqlx.ExecerContext
+	QueryRow(query string, args ...any) *sql.Row
+	QueryRowContext(ctx context.Context, query string, args ...any) *sql.Row
+	Select(dest interface{}, query string, args ...interface{}) error
+	SelectContext(ctx context.Context, dest interface{}, query string, args ...interface{}) error
+	Get(dest interface{}, query string, args ...interface{}) error
+	GetContext(ctx context.Context, dest interface{}, query string, args ...interface{}) error
 }
 
-func NewBase(db *sqlx.DB) *Base {
-	return &Base{
-		DB: db,
-	}
-}
-
-func (b *Base) TransactCtx(ctx context.Context, fn func(ctx context.Context, tx *sqlx.Tx) error) (err error) {
+func TransactCtx(ctx context.Context, fn func(ctx context.Context, tx Session) error) (err error) {
 	var tx *sqlx.Tx
-	tx, err = b.BeginTxx(ctx, nil)
+	tx, err = db.BeginTxx(ctx, nil)
 	if err != nil {
 		return err
 	}

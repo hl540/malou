@@ -23,4 +23,29 @@ func TestAddRunner(t *testing.T) {
 		}
 		t.Log(got)
 	})
+
+	t.Run("TestAddRunner", func(t *testing.T) {
+		err := TransactCtx(context.Background(), func(ctx context.Context, tx Session) error {
+			dao := NewRunnerDao(tx)
+			_, err := dao.Add(ctx, &RunnerModel{
+				ID:   "xxxxx",
+				Name: "sssss",
+			})
+			if err != nil {
+				return err
+			}
+			_, err = dao.Add(ctx, &RunnerModel{
+				ID:   "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+				Name: "sssss",
+			})
+			if err != nil {
+				return err
+			}
+			return nil
+		})
+		if err != nil {
+			t.Errorf("GetRunnerList() error = %v", err)
+			return
+		}
+	})
 }

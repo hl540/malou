@@ -3,7 +3,6 @@ package storage
 import (
 	"context"
 	"github.com/Masterminds/squirrel"
-	"github.com/jmoiron/sqlx"
 )
 
 type RunnerModel struct {
@@ -12,23 +11,23 @@ type RunnerModel struct {
 }
 
 type RunnerDao struct {
-	*Base
+	Session
 	table string
 }
 
-func NewRunnerDao(db *sqlx.DB) *RunnerDao {
+func NewRunnerDao(session Session) *RunnerDao {
 	return &RunnerDao{
-		Base:  NewBase(db),
-		table: "ml_runner",
+		Session: session,
+		table:   "ml_runner",
 	}
 }
 
 func (d *RunnerDao) Add(ctx context.Context, runner *RunnerModel) (string, error) {
-	_, err := squirrel.Insert(d.table).Values(
-		runner.ID,
-		runner.Name,
-	).RunWith(d.DB).Exec()
-	if err != nil {
+	sql, args, _ := squirrel.Insert(d.table).SetMap(map[string]interface{}{
+		"id":   runner.ID,
+		"name": runner.Name,
+	}).ToSql()
+	if _, err := d.ExecContext(ctx, sql, args); err != nil {
 		return "", err
 	}
 	return runner.ID, nil
