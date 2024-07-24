@@ -87,7 +87,7 @@ func (a *Runner) Register(ctx context.Context) error {
 	return nil
 }
 
-// Heartbeat 心跳，与服务端保持联系，并拉取服务端指令
+// Heartbeat 心跳，上报runner信息
 func (a *Runner) Heartbeat(ctx context.Context) {
 	heartbeatResp, err := a.MalouClient.Heartbeat(ctx, &v1.HeartbeatReq{
 		Token:        a.Token,
@@ -95,6 +95,7 @@ func (a *Runner) Heartbeat(ctx context.Context) {
 		MemoryInfo:   utils.GetMemoryPercent(),
 		DiskInfo:     utils.GetDiskPercent(),
 		WorkerStatus: worker.Pool.Status(),
+		Timestamp:    time.Now().Unix(),
 	})
 	if err != nil {
 		logrus.WithContext(ctx).Errorf("[Heartbeat] request failed, err: %s", err.Error())

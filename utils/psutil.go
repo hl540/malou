@@ -5,11 +5,10 @@ import (
 	"github.com/shirou/gopsutil/cpu"
 	"github.com/shirou/gopsutil/disk"
 	"github.com/shirou/gopsutil/mem"
-	"time"
 )
 
 func GetCpuPercent() []float64 {
-	percent, err := cpu.Percent(time.Second, true)
+	percent, err := cpu.Percent(0, false)
 	if err != nil {
 		return make([]float64, 0)
 	}

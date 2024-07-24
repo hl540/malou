@@ -5,12 +5,14 @@ go 1.22.0
 toolchain go1.22.2
 
 require (
+	github.com/Masterminds/squirrel v1.5.4
 	github.com/docker/docker v27.0.3+incompatible
+	github.com/go-sql-driver/mysql v1.8.1
 	github.com/golang-jwt/jwt/v5 v5.2.1
 	github.com/google/uuid v1.6.0
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.20.0
+	github.com/jmoiron/sqlx v1.4.0
 	github.com/joho/godotenv v1.5.1
-	github.com/pkg/errors v0.9.1
 	github.com/shirou/gopsutil v3.21.11+incompatible
 	github.com/sirupsen/logrus v1.9.3
 	go.mongodb.org/mongo-driver v1.16.0
@@ -21,6 +23,7 @@ require (
 )
 
 require (
+	filippo.io/edwards25519 v1.1.0 // indirect
 	github.com/Microsoft/go-winio v0.4.14 // indirect
 	github.com/containerd/log v0.1.0 // indirect
 	github.com/distribution/reference v0.6.0 // indirect
@@ -33,12 +36,15 @@ require (
 	github.com/gogo/protobuf v1.3.2 // indirect
 	github.com/golang/snappy v0.0.4 // indirect
 	github.com/klauspost/compress v1.13.6 // indirect
+	github.com/lann/builder v0.0.0-20180802200727-47ae307949d0 // indirect
+	github.com/lann/ps v0.0.0-20150810152359-62de8c46ede0 // indirect
 	github.com/moby/docker-image-spec v1.3.1 // indirect
 	github.com/moby/term v0.5.0 // indirect
 	github.com/montanaflynn/stats v0.7.1 // indirect
 	github.com/morikuni/aec v1.0.0 // indirect
 	github.com/opencontainers/go-digest v1.0.0 // indirect
 	github.com/opencontainers/image-spec v1.1.0 // indirect
+	github.com/pkg/errors v0.9.1 // indirect
 	github.com/rogpeppe/go-internal v1.12.0 // indirect
 	github.com/tklauser/go-sysconf v0.3.14 // indirect
 	github.com/tklauser/numcpus v0.8.0 // indirect

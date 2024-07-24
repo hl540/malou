@@ -12,13 +12,15 @@ var mongoClient *mongo.Client
 var database *mongo.Database
 
 const (
-	RunnerCollection      = "runners"
-	PipelineLogCollection = "pipeline_log"
+	RunnerCollection       = "runners"
+	RunnerHealthCollection = "runners_health"
+	PipelineLogCollection  = "pipeline_log"
 )
 
 var (
-	RunnerColl      *mongo.Collection
-	PipelineLogColl *mongo.Collection
+	RunnerColl       *mongo.Collection
+	RunnerHealthColl *mongo.Collection
+	PipelineLogColl  *mongo.Collection
 )
 
 func InitMongo(config *server.Config) (*mongo.Client, error) {
@@ -33,6 +35,7 @@ func InitMongo(config *server.Config) (*mongo.Client, error) {
 
 	database = mongoClient.Database(config.MongoDatabase)
 	RunnerColl = database.Collection(RunnerCollection)
+	RunnerHealthColl = database.Collection(RunnerHealthCollection)
 	PipelineLogColl = database.Collection(PipelineLogCollection)
 	return mongoClient, nil
 }

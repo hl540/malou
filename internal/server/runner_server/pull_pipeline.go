@@ -44,6 +44,7 @@ var pipeline = &v1.Pipeline{
 var t = time.NewTicker(5 * time.Second)
 
 func (s *RunnerServer) PullPipeline(ctx context.Context, req *v1.PullPipelineReq) (*v1.PullPipelineResp, error) {
+	return nil, errors.New("not")
 	select {
 	case <-t.C:
 		logrus.WithContext(ctx).Infof("[PullPipeline] %v", req)

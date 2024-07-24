@@ -20,6 +20,7 @@ message HeartbeatReq {
   MemoryInfo memory_info = 3;
   DiskInfo disk_info = 4;
   map<string, string> worker_status = 5;
+  int64 Timestamp = 6;
 }
 
 message HeartbeatResp {
