@@ -12,12 +12,13 @@ import (
 )
 
 func (s *RunnerServer) RegisterRunner(ctx context.Context, req *v1.RegisterRunnerReq) (*v1.RegisterRunnerResp, error) {
-	runner, err := storage.GetRunnerByID(ctx, req.Token)
+	runner, err := storage.Runner.GetByCode(ctx, req.Token)
 	if err != nil {
 		return nil, status.Error(codes.InvalidArgument, err.Error())
 	}
 	claims := server.RunnerRegisterClaims{
-		RunnerID: req.Token,
+		RunnerID:   runner.ID,
+		RunnerCode: runner.Code,
 		RegisteredClaims: jwt.RegisteredClaims{
 			IssuedAt:  jwt.NewNumericDate(time.Now()),
 			NotBefore: jwt.NewNumericDate(time.Now()),
@@ -25,7 +26,7 @@ func (s *RunnerServer) RegisterRunner(ctx context.Context, req *v1.RegisterRunne
 		},
 	}
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	jwtString, err := token.SignedString([]byte(runner.Key))
+	jwtString, err := token.SignedString([]byte(runner.Secret))
 	if err != nil {
 		return nil, err
 	}

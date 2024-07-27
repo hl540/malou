@@ -15,17 +15,22 @@ var (
 	Runner *RunnerDao
 )
 
-func InitDB(config *server.Config) error {
+const (
+	RunnerTable      = "ml_runner"
+	RunnerLabelTable = "ml_runner_label"
+)
+
+func InitDB(config *server.Config) (*sqlx.DB, error) {
 	var err error
 	db, err = sqlx.Open("mysql", "root:123456@tcp(127.0.0.1:3306)/malou")
 	if err != nil {
-		return err
+		return nil, err
 	}
 	if err := db.Ping(); err != nil {
-		return err
+		return nil, err
 	}
 	Runner = NewRunnerDao(db)
-	return nil
+	return db, nil
 }
 
 type Session interface {
@@ -41,7 +46,7 @@ type Session interface {
 	GetContext(ctx context.Context, dest interface{}, query string, args ...interface{}) error
 }
 
-func TransactCtx(ctx context.Context, fn func(ctx context.Context, tx Session) error) (err error) {
+func TransactionCtx(ctx context.Context, fn func(ctx context.Context, tx Session) error) (err error) {
 	var tx *sqlx.Tx
 	tx, err = db.BeginTxx(ctx, nil)
 	if err != nil {

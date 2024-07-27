@@ -26,7 +26,7 @@ func main() {
 	}
 
 	// 初始化数据库
-	mongoClient, err := storage.InitMongo(config)
+	db, err := storage.InitDB(config)
 	if err != nil {
 		panic(err)
 	}
@@ -76,8 +76,8 @@ func main() {
 
 	<-ctx.Done()
 
-	if err := mongoClient.Disconnect(context.Background()); err != nil {
-		logrus.WithContext(ctx).Errorf("mongo disconnect %s", err.Error())
+	if err := db.Close(); err != nil {
+		logrus.WithContext(ctx).Errorf("Failed to close database: %s", err.Error())
 	}
 	logrus.WithContext(ctx).Infof("RunnerServer stop")
 }
