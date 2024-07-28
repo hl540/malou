@@ -42,9 +42,9 @@ func (l *ReportLog) WithCmd(cmd string) *ReportLog {
 	}
 }
 
-func (l *ReportLog) Send(req *v1.PipelineLog) {
-	req.PipelineId = l.pipelineID
-	req.Step = l.step
+func (l *ReportLog) Send(req *v1.PipelineInstanceLog) {
+	req.PipelineInstanceId = l.pipelineID
+	req.StepName = l.step
 	req.Cmd = l.cmd
 	req.Timestamp = time.Now().Unix()
 	req.Duration = req.Timestamp - l.timestamp
@@ -56,22 +56,22 @@ func (l *ReportLog) Send(req *v1.PipelineLog) {
 }
 
 func (l *ReportLog) Log(message string, v ...any) {
-	l.Send(&v1.PipelineLog{
-		Type:    v1.PipelineLogType_LOG,
-		Message: fmt.Sprintf(message, v...),
+	l.Send(&v1.PipelineInstanceLog{
+		Type:   v1.PipelineLogType_LOG,
+		Result: fmt.Sprintf(message, v...),
 	})
 }
 
 func (l *ReportLog) Error(message string, v ...any) {
-	l.Send(&v1.PipelineLog{
-		Type:    v1.PipelineLogType_ERROR,
-		Message: fmt.Sprintf(message, v...),
+	l.Send(&v1.PipelineInstanceLog{
+		Type:   v1.PipelineLogType_ERROR,
+		Result: fmt.Sprintf(message, v...),
 	})
 }
 
 func (l *ReportLog) Done(message string, v ...any) {
-	l.Send(&v1.PipelineLog{
-		Type:    v1.PipelineLogType_DONE,
-		Message: fmt.Sprintf(message, v...),
+	l.Send(&v1.PipelineInstanceLog{
+		Type:   v1.PipelineLogType_DONE,
+		Result: fmt.Sprintf(message, v...),
 	})
 }

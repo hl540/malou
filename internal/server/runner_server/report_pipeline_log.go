@@ -17,17 +17,17 @@ func (s *RunnerServer) ReportPipelineLog(stream v1.Malou_ReportPipelineLogServer
 			logrus.WithContext(stream.Context()).Errorf(err.Error())
 			return err
 		}
-		err = storage.AddPipelineLog(stream.Context(), &storage.PipelineLog{
-			PipelineID: reportLog.PipelineId,
-			Step:       reportLog.Step,
-			Cmd:        reportLog.Cmd,
-			Message:    reportLog.Message,
-			Type:       reportLog.Type.String(),
-			Timestamp:  reportLog.Timestamp,
-			Duration:   reportLog.Duration,
+		err = storage.PipelineInstanceLog.Insert(stream.Context(), &storage.PipelineInstanceLogModel{
+			PipelineInstanceID: reportLog.PipelineInstanceId,
+			StepName:           reportLog.StepName,
+			Cmd:                reportLog.Cmd,
+			Result:             reportLog.Result,
+			Type:               reportLog.Type.String(),
+			Timestamp:          reportLog.Timestamp,
+			Duration:           reportLog.Duration,
 		})
 		if err != nil {
-			logrus.WithContext(stream.Context()).Errorf("[AddPipelineLog] err: %s", err.Error())
+			logrus.WithContext(stream.Context()).Warningf("ReportPipelineLog err: %s", err.Error())
 		}
 	}
 }

@@ -90,7 +90,7 @@ func (a *Runner) Register(ctx context.Context) error {
 // Heartbeat 心跳，上报runner信息
 func (a *Runner) Heartbeat(ctx context.Context) {
 	heartbeatResp, err := a.MalouClient.Heartbeat(ctx, &v1.HeartbeatReq{
-		Token:        a.Token,
+		Code:         a.Token,
 		CpuPercent:   utils.GetCpuPercent(),
 		MemoryInfo:   utils.GetMemoryPercent(),
 		DiskInfo:     utils.GetDiskPercent(),

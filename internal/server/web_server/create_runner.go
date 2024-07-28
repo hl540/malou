@@ -16,10 +16,13 @@ func (w *WebServer) CreateRunner(ctx context.Context, req *v1.CreateRunnerReq) (
 	}
 	err := storage.TransactionCtx(ctx, func(ctx context.Context, tx storage.Session) error {
 		runnerDao := storage.NewRunnerDao(tx)
-		if err := runnerDao.Add(ctx, runner); err != nil {
+		if err := runnerDao.Create(ctx, runner); err != nil {
 			return err
 		}
-		if err := runnerDao.SaveLabel(ctx, runner.Code, req.Labels); err != nil {
+		if err := runnerDao.SaveLabel(ctx, runner.ID, req.Labels); err != nil {
+			return err
+		}
+		if err := runnerDao.SaveEnv(ctx, runner.ID, req.Env); err != nil {
 			return err
 		}
 		return nil
@@ -27,5 +30,5 @@ func (w *WebServer) CreateRunner(ctx context.Context, req *v1.CreateRunnerReq) (
 	if err != nil {
 		return nil, err
 	}
-	return &v1.CreateRunnerResp{Token: runner.Code}, nil
+	return &v1.CreateRunnerResp{Id: runner.ID, Code: runner.Code}, nil
 }

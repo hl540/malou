@@ -9,51 +9,124 @@ import "google/api/annotations.proto";
 message CreateRunnerReq {
   string name = 1;
   repeated string labels = 2;
+  map<string, string> env = 3;
 }
 
 message CreateRunnerResp {
-  string token = 1;
+  int64 id = 1;
+  string code = 2;
+}
+
+// 更新runner
+message UpdateRunnerReq {
+  int64 id = 1;
+  string code = 2;
+  string name = 3;
+  repeated string labels = 4;
+  map<string, string> env = 5;
+}
+
+message UpdateRunnerResp {
+  int64 id = 1;
+  string code = 2;
 }
 
 // RunnerInfo
 message RunnerInfoReq {
-  string runner_id = 1;
+  int64 runner_id = 1;
+}
+
+message RunnerInfoHealth {
+  double cpu_percent = 2;
+  MemoryInfo memory_info = 3;
+  DiskInfo disk_info = 4;
+  map<string, string> worker_status = 5;
+}
+
+enum RunnerStatusType {
+  Offline = 0;
+  Online = 1;
 }
 
 message RunnerInfoResp {
+  string name = 1;
+  string code = 2;
+  repeated string labels = 3;
+  map<string, string> env = 4;
+  int64 created_at = 5;
+  int64 updated_at = 6;
+  RunnerInfoHealth health = 7;
+  RunnerStatusType status = 8;
 }
 
 // RunnerList
 message RunnerListReq {
   int64 size = 1;
   int64 page = 2;
-  string name = 3;
-  repeated string labels = 4;
+  string code = 3;
+  string name = 4;
+  repeated string labels = 5;
 }
 
-message RunnerInfo {
-  repeated double cpu_percent = 2;
-  MemoryInfo memory_info = 3;
-  DiskInfo disk_info = 4;
-  map<string, string> worker_status = 5;
+message RunnerListItem {
+  string code = 1;
+  string name = 2;
+  repeated string labels = 3;
+  int64 created_at = 4;
+  int64 updated_at = 5;
 }
 
 message RunnerListResp {
   int64 total = 1;
-  repeated RunnerInfo data = 2;
+  repeated RunnerListItem data = 2;
 }
 
-// PipelineLogList
-message PipelineLogListReq {
-  string pipeline_id = 1;
+// CreatePipeline
+message CreatePipelineReq {
+  string name = 1;
+  repeated Step steps = 2;
+}
+
+message CreatePipelineResp {
+  int64 pipeline_id = 1;
+}
+
+// UpdatePipeline
+message UpdatePipelineReq {
+  int64 pipeline_id = 1;
+  string name = 2;
+  repeated Step steps = 3;
+}
+
+message UpdatePipelineResp {
+  int64 pipeline_id = 1;
+}
+
+// 获取runner详情
+message PipelineInfoReq {
+  int64 pipeline_id = 1;
+}
+
+message PipelineInfoResp {
+  int64 pipeline_id = 1;
+  string name = 2;
+  repeated Step steps = 3;
+  int64 created_at = 4;
+  int64 updated_at = 5;
+}
+
+// PipelineInstanceLogList
+message PipelineInstanceLogListReq {
+  string pipeline_instance_id = 1;
   int64 offset = 2;
 }
 
-message PipelineLogListResp {
-  repeated PipelineLog log = 1;
+message PipelineInstanceLogListResp {
+  repeated PipelineInstanceLog log = 1;
 }
 
 service MalouWeb {
+  // 创建runner
   rpc CreateRunner(CreateRunnerReq) returns (CreateRunnerResp) {
     option (google.api.http) = {
       post: "/v1/runner/create",
@@ -61,12 +134,22 @@ service MalouWeb {
     };
   }
 
+  // 更新runner
+  rpc UpdateRunner(UpdateRunnerReq) returns (UpdateRunnerResp) {
+    option (google.api.http) = {
+      post: "/v1/runner/update",
+      body: "*"
+    };
+  }
+
+  // 获取runner详情
   rpc RunnerInfo(RunnerInfoReq) returns (RunnerInfoResp) {
     option (google.api.http) = {
       get: "/v1/runner/{runner_id}/info",
     };
   }
 
+  // 获取runner列表
   rpc RunnerList(RunnerListReq) returns (RunnerListResp) {
     option (google.api.http) = {
       post: "/v1/runner/list",
@@ -74,11 +157,35 @@ service MalouWeb {
     };
   }
 
-  rpc PipelineLogList(PipelineLogListReq) returns (PipelineLogListResp) {
+  // 创建pipeline
+  rpc CreatePipeline(CreatePipelineReq) returns (CreatePipelineResp) {
     option (google.api.http) = {
-      get: "/v1/pipeline_log/{pipeline_id}/{offset}",
+      post: "/v1/pipeline/create",
+      body: "*"
+    };
+  }
+
+  // 更新pipeline
+  rpc UpdatePipeline(UpdatePipelineReq) returns (UpdatePipelineResp) {
+    option (google.api.http) = {
+      post: "/v1/pipeline/update",
+      body: "*"
+    };
+  }
+
+  // 获取pipeline详情
+  rpc PipelineInfo(PipelineInfoReq) returns (PipelineInfoResp) {
+    option (google.api.http) = {
+      get: "/v1/pipeline/{pipeline_id}/info",
+    };
+  }
+
+  // 拉取pipeline实例执行日志
+  rpc PipelineInstanceLogList(PipelineInstanceLogListReq) returns (PipelineInstanceLogListResp) {
+    option (google.api.http) = {
+      get: "/v1/pipeline_instance_log/{pipeline_instance_id}/{offset}",
       additional_bindings: {
-        get: "/v1/pipeline_log/{pipeline_id}",
+        get: "/v1/pipeline_instance_log/{pipeline_instance_id}",
       }
     };
   }

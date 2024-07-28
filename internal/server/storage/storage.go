@@ -9,27 +9,42 @@ import (
 	"github.com/jmoiron/sqlx"
 )
 
-var db *sqlx.DB
+const (
+	RunnerTable              = "ml_runner"
+	RunnerLabelTable         = "ml_runner_label"
+	RunnerEnvTable           = "ml_runner_env"
+	RunnerHealthTable        = "ml_runner_health"
+	PipelineTable            = "ml_pipeline"
+	PipelineStepTable        = "ml_pipeline_step"
+	PipelineStepCmdTable     = "ml_pipeline_step_cmd"
+	PipelineInstanceTable    = "ml_pipeline_instance"
+	PipelineInstanceLogTable = "ml_pipeline_instance_log"
+)
 
 var (
-	Runner *RunnerDao
+	Runner              *RunnerDao
+	RunnerHealth        *RunnerHealthDao
+	Pipeline            *PipelineDao
+	PipelineInstanceLog *PipelineInstanceLogDao
 )
 
-const (
-	RunnerTable      = "ml_runner"
-	RunnerLabelTable = "ml_runner_label"
-)
+var db *sqlx.DB
 
 func InitDB(config *server.Config) (*sqlx.DB, error) {
 	var err error
-	db, err = sqlx.Open("mysql", "root:123456@tcp(127.0.0.1:3306)/malou")
+	db, err = sqlx.Open(config.DBDrive, config.DBSource)
 	if err != nil {
 		return nil, err
 	}
 	if err := db.Ping(); err != nil {
 		return nil, err
 	}
+
 	Runner = NewRunnerDao(db)
+	RunnerHealth = NewRunnerHealthDao(db)
+	Pipeline = NewPipelineDao(db)
+	PipelineInstanceLog = NewPipelineInstanceLogDao(db)
+
 	return db, nil
 }
 

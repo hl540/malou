@@ -19,6 +19,9 @@ import (
 )
 
 func main() {
+	go http.ListenAndServe(":6669", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Write([]byte("ok"))
+	}))
 	// 加载配置
 	config, err := server.LoadConfig()
 	if err != nil {

@@ -6,12 +6,12 @@ import (
 )
 
 type Config struct {
-	HttpHost      string `yaml:"HttpHost"`
-	HttpPort      int    `yaml:"HttpPort"`
-	GrpcHost      string `yaml:"GrpcHost"`
-	GrpcPort      int    `yaml:"GrpcPort"`
-	MongoUri      string `yaml:"MongoUri"`
-	MongoDatabase string `yaml:"MongoDatabase"`
+	HttpHost string `yaml:"HttpHost"`
+	HttpPort int    `yaml:"HttpPort"`
+	GrpcHost string `yaml:"GrpcHost"`
+	GrpcPort int    `yaml:"GrpcPort"`
+	DBDrive  string `yaml:"DBDrive"`
+	DBSource string `yaml:"DBSource"`
 }
 
 func LoadConfig() (*Config, error) {

@@ -1,6 +1,6 @@
 HttpHost: 0.0.0.0
-HttpPort: 6666
+HttpPort: 8989
 GrpcHost: 0.0.0.0
-GrpcPort: 5555
-MongoUri: mongodb://localhost:27017
-MongoDatabase: malou
+GrpcPort: 8787
+DBDrive: mysql
+DBSource: root:123456@tcp(127.0.0.1:3306)/malou

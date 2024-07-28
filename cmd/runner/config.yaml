@@ -1,6 +1,6 @@
-Token: 9611a200-86e4-4185-ad79-974b047acf54
+Token: f063f1f1-8170-4d87-9807-8bae7c991394
 ServerHost: 127.0.0.1
-ServerPort: 5555
+ServerPort: 8787
 HeartbeatFrequency: 1
 PullPipelineFrequency: 15
 WorkerPoolSize: 2

@@ -57,6 +57,32 @@ func local_request_MalouWeb_CreateRunner_0(ctx context.Context, marshaler runtim
 
 }
 
+func request_MalouWeb_UpdateRunner_0(ctx context.Context, marshaler runtime.Marshaler, client MalouWebClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var protoReq UpdateRunnerReq
+	var metadata runtime.ServerMetadata
+
+	if err := marshaler.NewDecoder(req.Body).Decode(&protoReq); err != nil && err != io.EOF {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
+	}
+
+	msg, err := client.UpdateRunner(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
+	return msg, metadata, err
+
+}
+
+func local_request_MalouWeb_UpdateRunner_0(ctx context.Context, marshaler runtime.Marshaler, server MalouWebServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var protoReq UpdateRunnerReq
+	var metadata runtime.ServerMetadata
+
+	if err := marshaler.NewDecoder(req.Body).Decode(&protoReq); err != nil && err != io.EOF {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
+	}
+
+	msg, err := server.UpdateRunner(ctx, &protoReq)
+	return msg, metadata, err
+
+}
+
 func request_MalouWeb_RunnerInfo_0(ctx context.Context, marshaler runtime.Marshaler, client MalouWebClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
 	var protoReq RunnerInfoReq
 	var metadata runtime.ServerMetadata
@@ -73,7 +99,7 @@ func request_MalouWeb_RunnerInfo_0(ctx context.Context, marshaler runtime.Marsha
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "runner_id")
 	}
 
-	protoReq.RunnerId, err = runtime.String(val)
+	protoReq.RunnerId, err = runtime.Int64(val)
 	if err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "runner_id", err)
 	}
@@ -99,7 +125,7 @@ func local_request_MalouWeb_RunnerInfo_0(ctx context.Context, marshaler runtime.
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "runner_id")
 	}
 
-	protoReq.RunnerId, err = runtime.String(val)
+	protoReq.RunnerId, err = runtime.Int64(val)
 	if err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "runner_id", err)
 	}
@@ -135,44 +161,60 @@ func local_request_MalouWeb_RunnerList_0(ctx context.Context, marshaler runtime.
 
 }
 
-func request_MalouWeb_PipelineLogList_0(ctx context.Context, marshaler runtime.Marshaler, client MalouWebClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq PipelineLogListReq
+func request_MalouWeb_CreatePipeline_0(ctx context.Context, marshaler runtime.Marshaler, client MalouWebClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var protoReq CreatePipelineReq
 	var metadata runtime.ServerMetadata
 
-	var (
-		val string
-		ok  bool
-		err error
-		_   = err
-	)
-
-	val, ok = pathParams["pipeline_id"]
-	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "pipeline_id")
+	if err := marshaler.NewDecoder(req.Body).Decode(&protoReq); err != nil && err != io.EOF {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
 
-	protoReq.PipelineId, err = runtime.String(val)
-	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "pipeline_id", err)
-	}
-
-	val, ok = pathParams["offset"]
-	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "offset")
-	}
-
-	protoReq.Offset, err = runtime.Int64(val)
-	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "offset", err)
-	}
-
-	msg, err := client.PipelineLogList(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
+	msg, err := client.CreatePipeline(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
 	return msg, metadata, err
 
 }
 
-func local_request_MalouWeb_PipelineLogList_0(ctx context.Context, marshaler runtime.Marshaler, server MalouWebServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq PipelineLogListReq
+func local_request_MalouWeb_CreatePipeline_0(ctx context.Context, marshaler runtime.Marshaler, server MalouWebServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var protoReq CreatePipelineReq
+	var metadata runtime.ServerMetadata
+
+	if err := marshaler.NewDecoder(req.Body).Decode(&protoReq); err != nil && err != io.EOF {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
+	}
+
+	msg, err := server.CreatePipeline(ctx, &protoReq)
+	return msg, metadata, err
+
+}
+
+func request_MalouWeb_UpdatePipeline_0(ctx context.Context, marshaler runtime.Marshaler, client MalouWebClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var protoReq UpdatePipelineReq
+	var metadata runtime.ServerMetadata
+
+	if err := marshaler.NewDecoder(req.Body).Decode(&protoReq); err != nil && err != io.EOF {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
+	}
+
+	msg, err := client.UpdatePipeline(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
+	return msg, metadata, err
+
+}
+
+func local_request_MalouWeb_UpdatePipeline_0(ctx context.Context, marshaler runtime.Marshaler, server MalouWebServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var protoReq UpdatePipelineReq
+	var metadata runtime.ServerMetadata
+
+	if err := marshaler.NewDecoder(req.Body).Decode(&protoReq); err != nil && err != io.EOF {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
+	}
+
+	msg, err := server.UpdatePipeline(ctx, &protoReq)
+	return msg, metadata, err
+
+}
+
+func request_MalouWeb_PipelineInfo_0(ctx context.Context, marshaler runtime.Marshaler, client MalouWebClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var protoReq PipelineInfoReq
 	var metadata runtime.ServerMetadata
 
 	var (
@@ -187,9 +229,61 @@ func local_request_MalouWeb_PipelineLogList_0(ctx context.Context, marshaler run
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "pipeline_id")
 	}
 
-	protoReq.PipelineId, err = runtime.String(val)
+	protoReq.PipelineId, err = runtime.Int64(val)
 	if err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "pipeline_id", err)
+	}
+
+	msg, err := client.PipelineInfo(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
+	return msg, metadata, err
+
+}
+
+func local_request_MalouWeb_PipelineInfo_0(ctx context.Context, marshaler runtime.Marshaler, server MalouWebServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var protoReq PipelineInfoReq
+	var metadata runtime.ServerMetadata
+
+	var (
+		val string
+		ok  bool
+		err error
+		_   = err
+	)
+
+	val, ok = pathParams["pipeline_id"]
+	if !ok {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "pipeline_id")
+	}
+
+	protoReq.PipelineId, err = runtime.Int64(val)
+	if err != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "pipeline_id", err)
+	}
+
+	msg, err := server.PipelineInfo(ctx, &protoReq)
+	return msg, metadata, err
+
+}
+
+func request_MalouWeb_PipelineInstanceLogList_0(ctx context.Context, marshaler runtime.Marshaler, client MalouWebClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var protoReq PipelineInstanceLogListReq
+	var metadata runtime.ServerMetadata
+
+	var (
+		val string
+		ok  bool
+		err error
+		_   = err
+	)
+
+	val, ok = pathParams["pipeline_instance_id"]
+	if !ok {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "pipeline_instance_id")
+	}
+
+	protoReq.PipelineInstanceId, err = runtime.String(val)
+	if err != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "pipeline_instance_id", err)
 	}
 
 	val, ok = pathParams["offset"]
@@ -202,17 +296,53 @@ func local_request_MalouWeb_PipelineLogList_0(ctx context.Context, marshaler run
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "offset", err)
 	}
 
-	msg, err := server.PipelineLogList(ctx, &protoReq)
+	msg, err := client.PipelineInstanceLogList(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
+	return msg, metadata, err
+
+}
+
+func local_request_MalouWeb_PipelineInstanceLogList_0(ctx context.Context, marshaler runtime.Marshaler, server MalouWebServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var protoReq PipelineInstanceLogListReq
+	var metadata runtime.ServerMetadata
+
+	var (
+		val string
+		ok  bool
+		err error
+		_   = err
+	)
+
+	val, ok = pathParams["pipeline_instance_id"]
+	if !ok {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "pipeline_instance_id")
+	}
+
+	protoReq.PipelineInstanceId, err = runtime.String(val)
+	if err != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "pipeline_instance_id", err)
+	}
+
+	val, ok = pathParams["offset"]
+	if !ok {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "offset")
+	}
+
+	protoReq.Offset, err = runtime.Int64(val)
+	if err != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "offset", err)
+	}
+
+	msg, err := server.PipelineInstanceLogList(ctx, &protoReq)
 	return msg, metadata, err
 
 }
 
 var (
-	filter_MalouWeb_PipelineLogList_1 = &utilities.DoubleArray{Encoding: map[string]int{"pipeline_id": 0}, Base: []int{1, 1, 0}, Check: []int{0, 1, 2}}
+	filter_MalouWeb_PipelineInstanceLogList_1 = &utilities.DoubleArray{Encoding: map[string]int{"pipeline_instance_id": 0}, Base: []int{1, 1, 0}, Check: []int{0, 1, 2}}
 )
 
-func request_MalouWeb_PipelineLogList_1(ctx context.Context, marshaler runtime.Marshaler, client MalouWebClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq PipelineLogListReq
+func request_MalouWeb_PipelineInstanceLogList_1(ctx context.Context, marshaler runtime.Marshaler, client MalouWebClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var protoReq PipelineInstanceLogListReq
 	var metadata runtime.ServerMetadata
 
 	var (
@@ -222,30 +352,30 @@ func request_MalouWeb_PipelineLogList_1(ctx context.Context, marshaler runtime.M
 		_   = err
 	)
 
-	val, ok = pathParams["pipeline_id"]
+	val, ok = pathParams["pipeline_instance_id"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "pipeline_id")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "pipeline_instance_id")
 	}
 
-	protoReq.PipelineId, err = runtime.String(val)
+	protoReq.PipelineInstanceId, err = runtime.String(val)
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "pipeline_id", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "pipeline_instance_id", err)
 	}
 
 	if err := req.ParseForm(); err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
-	if err := runtime.PopulateQueryParameters(&protoReq, req.Form, filter_MalouWeb_PipelineLogList_1); err != nil {
+	if err := runtime.PopulateQueryParameters(&protoReq, req.Form, filter_MalouWeb_PipelineInstanceLogList_1); err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
 
-	msg, err := client.PipelineLogList(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
+	msg, err := client.PipelineInstanceLogList(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
 	return msg, metadata, err
 
 }
 
-func local_request_MalouWeb_PipelineLogList_1(ctx context.Context, marshaler runtime.Marshaler, server MalouWebServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq PipelineLogListReq
+func local_request_MalouWeb_PipelineInstanceLogList_1(ctx context.Context, marshaler runtime.Marshaler, server MalouWebServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var protoReq PipelineInstanceLogListReq
 	var metadata runtime.ServerMetadata
 
 	var (
@@ -255,24 +385,24 @@ func local_request_MalouWeb_PipelineLogList_1(ctx context.Context, marshaler run
 		_   = err
 	)
 
-	val, ok = pathParams["pipeline_id"]
+	val, ok = pathParams["pipeline_instance_id"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "pipeline_id")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "pipeline_instance_id")
 	}
 
-	protoReq.PipelineId, err = runtime.String(val)
+	protoReq.PipelineInstanceId, err = runtime.String(val)
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "pipeline_id", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "pipeline_instance_id", err)
 	}
 
 	if err := req.ParseForm(); err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
-	if err := runtime.PopulateQueryParameters(&protoReq, req.Form, filter_MalouWeb_PipelineLogList_1); err != nil {
+	if err := runtime.PopulateQueryParameters(&protoReq, req.Form, filter_MalouWeb_PipelineInstanceLogList_1); err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
 
-	msg, err := server.PipelineLogList(ctx, &protoReq)
+	msg, err := server.PipelineInstanceLogList(ctx, &protoReq)
 	return msg, metadata, err
 
 }
@@ -305,6 +435,31 @@ func RegisterMalouWebHandlerServer(ctx context.Context, mux *runtime.ServeMux, s
 		}
 
 		forward_MalouWeb_CreateRunner_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+
+	})
+
+	mux.Handle("POST", pattern_MalouWeb_UpdateRunner_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+		ctx, cancel := context.WithCancel(req.Context())
+		defer cancel()
+		var stream runtime.ServerTransportStream
+		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
+		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
+		var err error
+		var annotatedContext context.Context
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/.MalouWeb/UpdateRunner", runtime.WithHTTPPathPattern("/v1/runner/update"))
+		if err != nil {
+			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
+			return
+		}
+		resp, md, err := local_request_MalouWeb_UpdateRunner_0(annotatedContext, inboundMarshaler, server, req, pathParams)
+		md.HeaderMD, md.TrailerMD = metadata.Join(md.HeaderMD, stream.Header()), metadata.Join(md.TrailerMD, stream.Trailer())
+		annotatedContext = runtime.NewServerMetadataContext(annotatedContext, md)
+		if err != nil {
+			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
+			return
+		}
+
+		forward_MalouWeb_UpdateRunner_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 
 	})
 
@@ -358,7 +513,7 @@ func RegisterMalouWebHandlerServer(ctx context.Context, mux *runtime.ServeMux, s
 
 	})
 
-	mux.Handle("GET", pattern_MalouWeb_PipelineLogList_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle("POST", pattern_MalouWeb_CreatePipeline_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		var stream runtime.ServerTransportStream
@@ -366,12 +521,12 @@ func RegisterMalouWebHandlerServer(ctx context.Context, mux *runtime.ServeMux, s
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/.MalouWeb/PipelineLogList", runtime.WithHTTPPathPattern("/v1/pipeline_log/{pipeline_id}/{offset}"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/.MalouWeb/CreatePipeline", runtime.WithHTTPPathPattern("/v1/pipeline/create"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		resp, md, err := local_request_MalouWeb_PipelineLogList_0(annotatedContext, inboundMarshaler, server, req, pathParams)
+		resp, md, err := local_request_MalouWeb_CreatePipeline_0(annotatedContext, inboundMarshaler, server, req, pathParams)
 		md.HeaderMD, md.TrailerMD = metadata.Join(md.HeaderMD, stream.Header()), metadata.Join(md.TrailerMD, stream.Trailer())
 		annotatedContext = runtime.NewServerMetadataContext(annotatedContext, md)
 		if err != nil {
@@ -379,11 +534,11 @@ func RegisterMalouWebHandlerServer(ctx context.Context, mux *runtime.ServeMux, s
 			return
 		}
 
-		forward_MalouWeb_PipelineLogList_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_MalouWeb_CreatePipeline_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 
 	})
 
-	mux.Handle("GET", pattern_MalouWeb_PipelineLogList_1, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle("POST", pattern_MalouWeb_UpdatePipeline_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		var stream runtime.ServerTransportStream
@@ -391,12 +546,12 @@ func RegisterMalouWebHandlerServer(ctx context.Context, mux *runtime.ServeMux, s
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/.MalouWeb/PipelineLogList", runtime.WithHTTPPathPattern("/v1/pipeline_log/{pipeline_id}"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/.MalouWeb/UpdatePipeline", runtime.WithHTTPPathPattern("/v1/pipeline/update"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		resp, md, err := local_request_MalouWeb_PipelineLogList_1(annotatedContext, inboundMarshaler, server, req, pathParams)
+		resp, md, err := local_request_MalouWeb_UpdatePipeline_0(annotatedContext, inboundMarshaler, server, req, pathParams)
 		md.HeaderMD, md.TrailerMD = metadata.Join(md.HeaderMD, stream.Header()), metadata.Join(md.TrailerMD, stream.Trailer())
 		annotatedContext = runtime.NewServerMetadataContext(annotatedContext, md)
 		if err != nil {
@@ -404,7 +559,82 @@ func RegisterMalouWebHandlerServer(ctx context.Context, mux *runtime.ServeMux, s
 			return
 		}
 
-		forward_MalouWeb_PipelineLogList_1(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_MalouWeb_UpdatePipeline_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+
+	})
+
+	mux.Handle("GET", pattern_MalouWeb_PipelineInfo_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+		ctx, cancel := context.WithCancel(req.Context())
+		defer cancel()
+		var stream runtime.ServerTransportStream
+		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
+		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
+		var err error
+		var annotatedContext context.Context
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/.MalouWeb/PipelineInfo", runtime.WithHTTPPathPattern("/v1/pipeline/{pipeline_id}/info"))
+		if err != nil {
+			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
+			return
+		}
+		resp, md, err := local_request_MalouWeb_PipelineInfo_0(annotatedContext, inboundMarshaler, server, req, pathParams)
+		md.HeaderMD, md.TrailerMD = metadata.Join(md.HeaderMD, stream.Header()), metadata.Join(md.TrailerMD, stream.Trailer())
+		annotatedContext = runtime.NewServerMetadataContext(annotatedContext, md)
+		if err != nil {
+			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
+			return
+		}
+
+		forward_MalouWeb_PipelineInfo_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+
+	})
+
+	mux.Handle("GET", pattern_MalouWeb_PipelineInstanceLogList_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+		ctx, cancel := context.WithCancel(req.Context())
+		defer cancel()
+		var stream runtime.ServerTransportStream
+		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
+		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
+		var err error
+		var annotatedContext context.Context
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/.MalouWeb/PipelineInstanceLogList", runtime.WithHTTPPathPattern("/v1/pipeline_instance_log/{pipeline_instance_id}/{offset}"))
+		if err != nil {
+			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
+			return
+		}
+		resp, md, err := local_request_MalouWeb_PipelineInstanceLogList_0(annotatedContext, inboundMarshaler, server, req, pathParams)
+		md.HeaderMD, md.TrailerMD = metadata.Join(md.HeaderMD, stream.Header()), metadata.Join(md.TrailerMD, stream.Trailer())
+		annotatedContext = runtime.NewServerMetadataContext(annotatedContext, md)
+		if err != nil {
+			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
+			return
+		}
+
+		forward_MalouWeb_PipelineInstanceLogList_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+
+	})
+
+	mux.Handle("GET", pattern_MalouWeb_PipelineInstanceLogList_1, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+		ctx, cancel := context.WithCancel(req.Context())
+		defer cancel()
+		var stream runtime.ServerTransportStream
+		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
+		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
+		var err error
+		var annotatedContext context.Context
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/.MalouWeb/PipelineInstanceLogList", runtime.WithHTTPPathPattern("/v1/pipeline_instance_log/{pipeline_instance_id}"))
+		if err != nil {
+			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
+			return
+		}
+		resp, md, err := local_request_MalouWeb_PipelineInstanceLogList_1(annotatedContext, inboundMarshaler, server, req, pathParams)
+		md.HeaderMD, md.TrailerMD = metadata.Join(md.HeaderMD, stream.Header()), metadata.Join(md.TrailerMD, stream.Trailer())
+		annotatedContext = runtime.NewServerMetadataContext(annotatedContext, md)
+		if err != nil {
+			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
+			return
+		}
+
+		forward_MalouWeb_PipelineInstanceLogList_1(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 
 	})
 
@@ -471,6 +701,28 @@ func RegisterMalouWebHandlerClient(ctx context.Context, mux *runtime.ServeMux, c
 
 	})
 
+	mux.Handle("POST", pattern_MalouWeb_UpdateRunner_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+		ctx, cancel := context.WithCancel(req.Context())
+		defer cancel()
+		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
+		var err error
+		var annotatedContext context.Context
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/.MalouWeb/UpdateRunner", runtime.WithHTTPPathPattern("/v1/runner/update"))
+		if err != nil {
+			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
+			return
+		}
+		resp, md, err := request_MalouWeb_UpdateRunner_0(annotatedContext, inboundMarshaler, client, req, pathParams)
+		annotatedContext = runtime.NewServerMetadataContext(annotatedContext, md)
+		if err != nil {
+			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
+			return
+		}
+
+		forward_MalouWeb_UpdateRunner_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+
+	})
+
 	mux.Handle("GET", pattern_MalouWeb_RunnerInfo_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
@@ -515,47 +767,113 @@ func RegisterMalouWebHandlerClient(ctx context.Context, mux *runtime.ServeMux, c
 
 	})
 
-	mux.Handle("GET", pattern_MalouWeb_PipelineLogList_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle("POST", pattern_MalouWeb_CreatePipeline_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/.MalouWeb/PipelineLogList", runtime.WithHTTPPathPattern("/v1/pipeline_log/{pipeline_id}/{offset}"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/.MalouWeb/CreatePipeline", runtime.WithHTTPPathPattern("/v1/pipeline/create"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		resp, md, err := request_MalouWeb_PipelineLogList_0(annotatedContext, inboundMarshaler, client, req, pathParams)
+		resp, md, err := request_MalouWeb_CreatePipeline_0(annotatedContext, inboundMarshaler, client, req, pathParams)
 		annotatedContext = runtime.NewServerMetadataContext(annotatedContext, md)
 		if err != nil {
 			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
 			return
 		}
 
-		forward_MalouWeb_PipelineLogList_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_MalouWeb_CreatePipeline_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 
 	})
 
-	mux.Handle("GET", pattern_MalouWeb_PipelineLogList_1, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle("POST", pattern_MalouWeb_UpdatePipeline_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/.MalouWeb/PipelineLogList", runtime.WithHTTPPathPattern("/v1/pipeline_log/{pipeline_id}"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/.MalouWeb/UpdatePipeline", runtime.WithHTTPPathPattern("/v1/pipeline/update"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		resp, md, err := request_MalouWeb_PipelineLogList_1(annotatedContext, inboundMarshaler, client, req, pathParams)
+		resp, md, err := request_MalouWeb_UpdatePipeline_0(annotatedContext, inboundMarshaler, client, req, pathParams)
 		annotatedContext = runtime.NewServerMetadataContext(annotatedContext, md)
 		if err != nil {
 			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
 			return
 		}
 
-		forward_MalouWeb_PipelineLogList_1(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_MalouWeb_UpdatePipeline_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+
+	})
+
+	mux.Handle("GET", pattern_MalouWeb_PipelineInfo_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+		ctx, cancel := context.WithCancel(req.Context())
+		defer cancel()
+		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
+		var err error
+		var annotatedContext context.Context
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/.MalouWeb/PipelineInfo", runtime.WithHTTPPathPattern("/v1/pipeline/{pipeline_id}/info"))
+		if err != nil {
+			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
+			return
+		}
+		resp, md, err := request_MalouWeb_PipelineInfo_0(annotatedContext, inboundMarshaler, client, req, pathParams)
+		annotatedContext = runtime.NewServerMetadataContext(annotatedContext, md)
+		if err != nil {
+			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
+			return
+		}
+
+		forward_MalouWeb_PipelineInfo_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+
+	})
+
+	mux.Handle("GET", pattern_MalouWeb_PipelineInstanceLogList_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+		ctx, cancel := context.WithCancel(req.Context())
+		defer cancel()
+		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
+		var err error
+		var annotatedContext context.Context
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/.MalouWeb/PipelineInstanceLogList", runtime.WithHTTPPathPattern("/v1/pipeline_instance_log/{pipeline_instance_id}/{offset}"))
+		if err != nil {
+			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
+			return
+		}
+		resp, md, err := request_MalouWeb_PipelineInstanceLogList_0(annotatedContext, inboundMarshaler, client, req, pathParams)
+		annotatedContext = runtime.NewServerMetadataContext(annotatedContext, md)
+		if err != nil {
+			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
+			return
+		}
+
+		forward_MalouWeb_PipelineInstanceLogList_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+
+	})
+
+	mux.Handle("GET", pattern_MalouWeb_PipelineInstanceLogList_1, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+		ctx, cancel := context.WithCancel(req.Context())
+		defer cancel()
+		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
+		var err error
+		var annotatedContext context.Context
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/.MalouWeb/PipelineInstanceLogList", runtime.WithHTTPPathPattern("/v1/pipeline_instance_log/{pipeline_instance_id}"))
+		if err != nil {
+			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
+			return
+		}
+		resp, md, err := request_MalouWeb_PipelineInstanceLogList_1(annotatedContext, inboundMarshaler, client, req, pathParams)
+		annotatedContext = runtime.NewServerMetadataContext(annotatedContext, md)
+		if err != nil {
+			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
+			return
+		}
+
+		forward_MalouWeb_PipelineInstanceLogList_1(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 
 	})
 
@@ -565,23 +883,39 @@ func RegisterMalouWebHandlerClient(ctx context.Context, mux *runtime.ServeMux, c
 var (
 	pattern_MalouWeb_CreateRunner_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"v1", "runner", "create"}, ""))
 
+	pattern_MalouWeb_UpdateRunner_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"v1", "runner", "update"}, ""))
+
 	pattern_MalouWeb_RunnerInfo_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 1, 5, 2, 2, 3}, []string{"v1", "runner", "runner_id", "info"}, ""))
 
 	pattern_MalouWeb_RunnerList_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"v1", "runner", "list"}, ""))
 
-	pattern_MalouWeb_PipelineLogList_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 1, 5, 2, 1, 0, 4, 1, 5, 3}, []string{"v1", "pipeline_log", "pipeline_id", "offset"}, ""))
+	pattern_MalouWeb_CreatePipeline_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"v1", "pipeline", "create"}, ""))
 
-	pattern_MalouWeb_PipelineLogList_1 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 1, 5, 2}, []string{"v1", "pipeline_log", "pipeline_id"}, ""))
+	pattern_MalouWeb_UpdatePipeline_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"v1", "pipeline", "update"}, ""))
+
+	pattern_MalouWeb_PipelineInfo_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 1, 5, 2, 2, 3}, []string{"v1", "pipeline", "pipeline_id", "info"}, ""))
+
+	pattern_MalouWeb_PipelineInstanceLogList_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 1, 5, 2, 1, 0, 4, 1, 5, 3}, []string{"v1", "pipeline_instance_log", "pipeline_instance_id", "offset"}, ""))
+
+	pattern_MalouWeb_PipelineInstanceLogList_1 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 1, 5, 2}, []string{"v1", "pipeline_instance_log", "pipeline_instance_id"}, ""))
 )
 
 var (
 	forward_MalouWeb_CreateRunner_0 = runtime.ForwardResponseMessage
 
+	forward_MalouWeb_UpdateRunner_0 = runtime.ForwardResponseMessage
+
 	forward_MalouWeb_RunnerInfo_0 = runtime.ForwardResponseMessage
 
 	forward_MalouWeb_RunnerList_0 = runtime.ForwardResponseMessage
 
-	forward_MalouWeb_PipelineLogList_0 = runtime.ForwardResponseMessage
+	forward_MalouWeb_CreatePipeline_0 = runtime.ForwardResponseMessage
 
-	forward_MalouWeb_PipelineLogList_1 = runtime.ForwardResponseMessage
+	forward_MalouWeb_UpdatePipeline_0 = runtime.ForwardResponseMessage
+
+	forward_MalouWeb_PipelineInfo_0 = runtime.ForwardResponseMessage
+
+	forward_MalouWeb_PipelineInstanceLogList_0 = runtime.ForwardResponseMessage
+
+	forward_MalouWeb_PipelineInstanceLogList_1 = runtime.ForwardResponseMessage
 )

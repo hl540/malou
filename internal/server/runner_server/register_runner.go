@@ -14,7 +14,7 @@ import (
 func (s *RunnerServer) RegisterRunner(ctx context.Context, req *v1.RegisterRunnerReq) (*v1.RegisterRunnerResp, error) {
 	runner, err := storage.Runner.GetByCode(ctx, req.Token)
 	if err != nil {
-		return nil, status.Error(codes.InvalidArgument, err.Error())
+		return nil, status.Error(codes.NotFound, err.Error())
 	}
 	claims := server.RunnerRegisterClaims{
 		RunnerID:   runner.ID,

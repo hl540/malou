@@ -15,8 +15,8 @@ message RegisterRunnerResp {
 
 // Heartbeat
 message HeartbeatReq {
-  string token = 1;
-  repeated double cpu_percent = 2;
+  string code = 1;
+  double cpu_percent = 2;
   MemoryInfo memory_info = 3;
   DiskInfo disk_info = 4;
   map<string, string> worker_status = 5;
@@ -48,5 +48,5 @@ service Malou {
   // 拉取流水线任务
   rpc PullPipeline(PullPipelineReq) returns (PullPipelineResp) {}
   // 回显执行结果
-  rpc ReportPipelineLog(stream PipelineLog) returns (ReportPipelineLogResp) {}
+  rpc ReportPipelineLog(stream PipelineInstanceLog) returns (ReportPipelineLogResp) {}
 }

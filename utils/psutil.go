@@ -5,14 +5,16 @@ import (
 	"github.com/shirou/gopsutil/cpu"
 	"github.com/shirou/gopsutil/disk"
 	"github.com/shirou/gopsutil/mem"
+	"math"
+	"time"
 )
 
-func GetCpuPercent() []float64 {
-	percent, err := cpu.Percent(0, false)
+func GetCpuPercent() float64 {
+	percent, err := cpu.Percent(time.Second, false)
 	if err != nil {
-		return make([]float64, 0)
+		return 0
 	}
-	return percent
+	return math.Round(percent[0]*100) / 100
 }
 
 func GetMemoryPercent() *v1.MemoryInfo {
@@ -21,9 +23,9 @@ func GetMemoryPercent() *v1.MemoryInfo {
 		return &v1.MemoryInfo{}
 	}
 	return &v1.MemoryInfo{
-		Total:       memory.Total,
-		Used:        memory.Used,
-		Free:        memory.Free,
+		Total:       bytesToGB(memory.Total),
+		Used:        bytesToGB(memory.Used),
+		Free:        bytesToGB(memory.Free),
 		UsedPercent: memory.UsedPercent,
 	}
 }
@@ -38,9 +40,14 @@ func GetDiskPercent() *v1.DiskInfo {
 		return &v1.DiskInfo{}
 	}
 	return &v1.DiskInfo{
-		Total:       diskInfo.Total,
-		Used:        diskInfo.Used,
-		Free:        diskInfo.Free,
+		Total:       bytesToGB(diskInfo.Total),
+		Used:        bytesToGB(diskInfo.Used),
+		Free:        bytesToGB(diskInfo.Free),
 		UsedPercent: diskInfo.UsedPercent,
 	}
+}
+
+func bytesToGB(bytes uint64) float64 {
+	value := float64(bytes) / (1024 * 1024 * 1024)
+	return math.Round(value*100) / 100
 }
