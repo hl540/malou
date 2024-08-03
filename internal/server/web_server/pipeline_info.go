@@ -2,8 +2,6 @@ package web_server
 
 import (
 	"context"
-	"database/sql"
-	"errors"
 	"github.com/hl540/malou/internal/server/storage"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -12,12 +10,8 @@ import (
 )
 
 func (w *WebServer) PipelineInfo(ctx context.Context, req *v1.PipelineInfoReq) (*v1.PipelineInfoResp, error) {
-	pipeline, err := storage.Pipeline.GetByID(ctx, req.PipelineId)
+	pipeline, steps, err := storage.Pipeline.GetInfoByID(ctx, req.PipelineId)
 	if err != nil {
-		return nil, status.Error(codes.NotFound, err.Error())
-	}
-	steps, err := storage.Pipeline.GetStepsByPipelineId(ctx, pipeline.ID)
-	if err != nil && !errors.Is(err, sql.ErrNoRows) {
 		return nil, status.Error(codes.NotFound, err.Error())
 	}
 	resp := &v1.PipelineInfoResp{

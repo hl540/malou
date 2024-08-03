@@ -20,7 +20,6 @@ message CreateRunnerResp {
 // 更新runner
 message UpdateRunnerReq {
   int64 id = 1;
-  string code = 2;
   string name = 3;
   repeated string labels = 4;
   map<string, string> env = 5;
@@ -69,11 +68,12 @@ message RunnerListReq {
 }
 
 message RunnerListItem {
-  string code = 1;
-  string name = 2;
-  repeated string labels = 3;
-  int64 created_at = 4;
-  int64 updated_at = 5;
+  int64 id = 1;
+  string code = 2;
+  string name = 3;
+  repeated string labels = 4;
+  int64 created_at = 5;
+  int64 updated_at = 6;
 }
 
 message RunnerListResp {
@@ -102,7 +102,7 @@ message UpdatePipelineResp {
   int64 pipeline_id = 1;
 }
 
-// 获取runner详情
+// 获取pipeline详情
 message PipelineInfoReq {
   int64 pipeline_id = 1;
 }
@@ -113,6 +113,25 @@ message PipelineInfoResp {
   repeated Step steps = 3;
   int64 created_at = 4;
   int64 updated_at = 5;
+}
+
+// 获取pipeline列表
+message PipelineListReq {
+  int64 size = 1;
+  int64 page = 2;
+  string name = 3;
+}
+
+message PipelineListItem {
+  int64 pipeline_id = 1;
+  string name = 2;
+  int64 created_at = 4;
+  int64 updated_at = 5;
+}
+
+message PipelineListResp {
+  int64 total = 1;
+  repeated PipelineListItem data = 2;
 }
 
 // PipelineInstanceLogList
@@ -177,6 +196,14 @@ service MalouWeb {
   rpc PipelineInfo(PipelineInfoReq) returns (PipelineInfoResp) {
     option (google.api.http) = {
       get: "/v1/pipeline/{pipeline_id}/info",
+    };
+  }
+
+  // 获取pipeline列表
+  rpc PipelineList(PipelineListReq) returns (PipelineListResp) {
+    option (google.api.http) = {
+      post: "/v1/pipeline/list",
+      body: "*"
     };
   }
 

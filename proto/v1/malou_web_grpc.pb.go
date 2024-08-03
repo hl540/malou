@@ -26,6 +26,7 @@ const (
 	MalouWeb_CreatePipeline_FullMethodName          = "/MalouWeb/CreatePipeline"
 	MalouWeb_UpdatePipeline_FullMethodName          = "/MalouWeb/UpdatePipeline"
 	MalouWeb_PipelineInfo_FullMethodName            = "/MalouWeb/PipelineInfo"
+	MalouWeb_PipelineList_FullMethodName            = "/MalouWeb/PipelineList"
 	MalouWeb_PipelineInstanceLogList_FullMethodName = "/MalouWeb/PipelineInstanceLogList"
 )
 
@@ -47,6 +48,8 @@ type MalouWebClient interface {
 	UpdatePipeline(ctx context.Context, in *UpdatePipelineReq, opts ...grpc.CallOption) (*UpdatePipelineResp, error)
 	// 获取pipeline详情
 	PipelineInfo(ctx context.Context, in *PipelineInfoReq, opts ...grpc.CallOption) (*PipelineInfoResp, error)
+	// 获取pipeline列表
+	PipelineList(ctx context.Context, in *PipelineListReq, opts ...grpc.CallOption) (*PipelineListResp, error)
 	// 拉取pipeline实例执行日志
 	PipelineInstanceLogList(ctx context.Context, in *PipelineInstanceLogListReq, opts ...grpc.CallOption) (*PipelineInstanceLogListResp, error)
 }
@@ -122,6 +125,15 @@ func (c *malouWebClient) PipelineInfo(ctx context.Context, in *PipelineInfoReq, 
 	return out, nil
 }
 
+func (c *malouWebClient) PipelineList(ctx context.Context, in *PipelineListReq, opts ...grpc.CallOption) (*PipelineListResp, error) {
+	out := new(PipelineListResp)
+	err := c.cc.Invoke(ctx, MalouWeb_PipelineList_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *malouWebClient) PipelineInstanceLogList(ctx context.Context, in *PipelineInstanceLogListReq, opts ...grpc.CallOption) (*PipelineInstanceLogListResp, error) {
 	out := new(PipelineInstanceLogListResp)
 	err := c.cc.Invoke(ctx, MalouWeb_PipelineInstanceLogList_FullMethodName, in, out, opts...)
@@ -149,6 +161,8 @@ type MalouWebServer interface {
 	UpdatePipeline(context.Context, *UpdatePipelineReq) (*UpdatePipelineResp, error)
 	// 获取pipeline详情
 	PipelineInfo(context.Context, *PipelineInfoReq) (*PipelineInfoResp, error)
+	// 获取pipeline列表
+	PipelineList(context.Context, *PipelineListReq) (*PipelineListResp, error)
 	// 拉取pipeline实例执行日志
 	PipelineInstanceLogList(context.Context, *PipelineInstanceLogListReq) (*PipelineInstanceLogListResp, error)
 	mustEmbedUnimplementedMalouWebServer()
@@ -178,6 +192,9 @@ func (UnimplementedMalouWebServer) UpdatePipeline(context.Context, *UpdatePipeli
 }
 func (UnimplementedMalouWebServer) PipelineInfo(context.Context, *PipelineInfoReq) (*PipelineInfoResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method PipelineInfo not implemented")
+}
+func (UnimplementedMalouWebServer) PipelineList(context.Context, *PipelineListReq) (*PipelineListResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method PipelineList not implemented")
 }
 func (UnimplementedMalouWebServer) PipelineInstanceLogList(context.Context, *PipelineInstanceLogListReq) (*PipelineInstanceLogListResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method PipelineInstanceLogList not implemented")
@@ -321,6 +338,24 @@ func _MalouWeb_PipelineInfo_Handler(srv interface{}, ctx context.Context, dec fu
 	return interceptor(ctx, in, info, handler)
 }
 
+func _MalouWeb_PipelineList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(PipelineListReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MalouWebServer).PipelineList(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: MalouWeb_PipelineList_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MalouWebServer).PipelineList(ctx, req.(*PipelineListReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _MalouWeb_PipelineInstanceLogList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(PipelineInstanceLogListReq)
 	if err := dec(in); err != nil {
@@ -373,6 +408,10 @@ var MalouWeb_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "PipelineInfo",
 			Handler:    _MalouWeb_PipelineInfo_Handler,
+		},
+		{
+			MethodName: "PipelineList",
+			Handler:    _MalouWeb_PipelineList_Handler,
 		},
 		{
 			MethodName: "PipelineInstanceLogList",

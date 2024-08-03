@@ -9,30 +9,32 @@ import (
 )
 
 func (w *WebServer) UpdateRunner(ctx context.Context, req *v1.UpdateRunnerReq) (*v1.UpdateRunnerResp, error) {
-	newRunner := &storage.RunnerModel{
-		ID:   req.Id,
-		Code: req.Code,
-		Name: req.Name,
-	}
-	runner, err := storage.Runner.GetByID(ctx, newRunner.ID)
+	newRunner, newLabels, newEnvs := w.updateRunnerReqVO2DO(req)
+	runner, err := storage.Runner.GetByID(ctx, newRunner.Id)
 	if err != nil {
 		return nil, status.Error(codes.NotFound, err.Error())
 	}
-	err = storage.TransactionCtx(ctx, func(ctx context.Context, tx storage.Session) error {
-		runnerDao := storage.NewRunnerDao(tx)
-		if err := runnerDao.Update(ctx, newRunner); err != nil {
-			return err
-		}
-		if err := runnerDao.SaveLabel(ctx, runner.ID, req.Labels); err != nil {
-			return err
-		}
-		if err := runnerDao.SaveEnv(ctx, runner.ID, req.Env); err != nil {
-			return err
-		}
-		return nil
-	})
+	newRunner.Id = runner.Id
+	newRunner.Code = runner.Code
+	err = storage.Runner.Update(ctx, newRunner, newLabels, newEnvs)
 	if err != nil {
 		return nil, status.Error(codes.Internal, err.Error())
 	}
-	return &v1.UpdateRunnerResp{Id: runner.ID, Code: runner.Code}, nil
+	return &v1.UpdateRunnerResp{Id: runner.Id, Code: runner.Code}, nil
+}
+
+func (w *WebServer) updateRunnerReqVO2DO(req *v1.UpdateRunnerReq) (*storage.RunnerModel, []*storage.RunnerLabelModel, []*storage.RunnerEnvModel) {
+	runner := &storage.RunnerModel{
+		Id:   req.Id,
+		Name: req.Name,
+	}
+	labels := make([]*storage.RunnerLabelModel, 0, len(req.Labels))
+	for _, label := range req.Labels {
+		labels = append(labels, &storage.RunnerLabelModel{RunnerId: req.Id, Value: label})
+	}
+	envs := make([]*storage.RunnerEnvModel, 0, len(req.Env))
+	for k, v := range req.Env {
+		envs = append(envs, &storage.RunnerEnvModel{RunnerId: req.Id, Name: k, Value: v})
+	}
+	return runner, labels, envs
 }

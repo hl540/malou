@@ -9,21 +9,12 @@ import (
 )
 
 func (w *WebServer) UpdatePipeline(ctx context.Context, req *v1.UpdatePipelineReq) (*v1.UpdatePipelineResp, error) {
-	newPipeline, steps := w.updatePipelineReq2DO(req)
+	newPipeline, newSteps := w.updatePipelineReq2DO(req)
 	pipeline, err := storage.Pipeline.GetByID(ctx, newPipeline.ID)
 	if err != nil {
 		return nil, status.Error(codes.NotFound, err.Error())
 	}
-	err = storage.TransactionCtx(ctx, func(ctx context.Context, tx storage.Session) error {
-		pipelineDao := storage.NewPipelineDao(tx)
-		if err := pipelineDao.Update(ctx, newPipeline); err != nil {
-			return err
-		}
-		if err := pipelineDao.BatchSavePipelineStep(ctx, pipeline.ID, steps); err != nil {
-			return err
-		}
-		return nil
-	})
+	err = storage.Pipeline.Update(ctx, newPipeline, newSteps)
 	if err != nil {
 		return nil, status.Error(codes.Internal, err.Error())
 	}

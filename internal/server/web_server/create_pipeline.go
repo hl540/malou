@@ -10,16 +10,7 @@ import (
 
 func (w *WebServer) CreatePipeline(ctx context.Context, req *v1.CreatePipelineReq) (*v1.CreatePipelineResp, error) {
 	pipeline, steps := w.createPipelineReq2DO(req)
-	err := storage.TransactionCtx(ctx, func(ctx context.Context, tx storage.Session) error {
-		pipelineDao := storage.NewPipelineDao(tx)
-		if err := pipelineDao.Create(ctx, pipeline); err != nil {
-			return err
-		}
-		if err := pipelineDao.BatchSavePipelineStep(ctx, pipeline.ID, steps); err != nil {
-			return err
-		}
-		return nil
-	})
+	err := storage.Pipeline.Create(ctx, pipeline, steps)
 	if err != nil {
 		return nil, status.Error(codes.Internal, err.Error())
 	}

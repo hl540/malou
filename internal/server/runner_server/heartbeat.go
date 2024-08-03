@@ -24,7 +24,7 @@ func (s *RunnerServer) Heartbeat(ctx context.Context, req *v1.HeartbeatReq) (*v1
 func (s *RunnerServer) saveRunnerHealth(ctx context.Context, req *v1.HeartbeatReq, runner *storage.RunnerModel) error {
 	workerStatus, _ := json.Marshal(req.WorkerStatus)
 	return storage.RunnerHealth.Insert(ctx, &storage.RunnerHealthModel{
-		RunnerID:          runner.ID,
+		RunnerID:          runner.Id,
 		CpuPercent:        req.CpuPercent,
 		MemoryTotal:       req.MemoryInfo.Total,
 		MemoryUsed:        req.MemoryInfo.Used,

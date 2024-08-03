@@ -29,6 +29,7 @@ func NewRunnerHealthDao(session Session) *RunnerHealthDao {
 	return &RunnerHealthDao{session}
 }
 
+// Insert 插入一条健康信息
 func (d *RunnerHealthDao) Insert(ctx context.Context, data *RunnerHealthModel) error {
 	err := d.cleanOverdue(ctx, data.RunnerID)
 	if err != nil {
@@ -53,6 +54,7 @@ func (d *RunnerHealthDao) Insert(ctx context.Context, data *RunnerHealthModel) e
 	return err
 }
 
+// 清理历史的健康信息，保留最新10条
 func (d *RunnerHealthDao) cleanOverdue(ctx context.Context, runnerID int64) error {
 	query := fmt.Sprintf("SELECT `created_at` FROM %s WHERE runner_id = ? ORDER BY created_at DESC LIMIT 1 OFFSET 9", RunnerHealthTable)
 	var createdAt int64
@@ -68,8 +70,9 @@ func (d *RunnerHealthDao) cleanOverdue(ctx context.Context, runnerID int64) erro
 	return err
 }
 
+// GetAllByRunnerID 获取全部健康信息
 func (d *RunnerHealthDao) GetAllByRunnerID(ctx context.Context, runnerID int64) ([]*RunnerHealthModel, error) {
-	query := fmt.Sprintf("SELECT * FROM %s WHERE runner_id = ?", RunnerHealthTable)
+	query := fmt.Sprintf("SELECT * FROM %s WHERE `runner_id` = ?", RunnerHealthTable)
 	var healths []*RunnerHealthModel
 	err := d.SelectContext(ctx, &healths, query, runnerID)
 	if err != nil {
@@ -78,10 +81,11 @@ func (d *RunnerHealthDao) GetAllByRunnerID(ctx context.Context, runnerID int64) 
 	return healths, nil
 }
 
-func (d *RunnerHealthDao) GetLatestByRunnerID(ctx context.Context, runnerID int64) (*RunnerHealthModel, error) {
-	query := fmt.Sprintf("SELECT * FROM %s WHERE runner_id = ? ORDER BY `runner_id` LIMIT 1", RunnerHealthTable)
+// GetLatestByRunnerID 获取最新一条健康信息
+func (d *RunnerHealthDao) GetLatestByRunnerID(ctx context.Context, runnerID int64, outtime int64) (*RunnerHealthModel, error) {
+	query := fmt.Sprintf("SELECT * FROM %s WHERE `runner_id` = ? AND `created_at` > ? ORDER BY `runner_id` LIMIT 1", RunnerHealthTable)
 	var health RunnerHealthModel
-	err := d.GetContext(ctx, &health, query, runnerID)
+	err := d.GetContext(ctx, &health, query, runnerID, outtime)
 	if err != nil {
 		return nil, err
 	}
