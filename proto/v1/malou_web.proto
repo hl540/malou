@@ -134,6 +134,25 @@ message PipelineListResp {
   repeated PipelineListItem data = 2;
 }
 
+// 创建pipelines实例
+message CreatePipelineInstanceReq {
+  int64 pipeline_id = 1;
+  string runner_code = 2;
+  map<string, string> env = 3;
+}
+
+enum PipelineInstanceType {
+    Pending = 0;
+    Running = 1;
+    Complete = 2;
+    Failed = 3;
+}
+
+message CreatePipelineInstanceResp {
+  string pipeline_instance_id = 1;
+  PipelineInstanceType status = 2;
+}
+
 // PipelineInstanceLogList
 message PipelineInstanceLogListReq {
   string pipeline_instance_id = 1;
@@ -203,6 +222,14 @@ service MalouWeb {
   rpc PipelineList(PipelineListReq) returns (PipelineListResp) {
     option (google.api.http) = {
       post: "/v1/pipeline/list",
+      body: "*"
+    };
+  }
+
+  // 创建pipelines实例
+  rpc CreatePipelineInstance(CreatePipelineInstanceReq) returns (CreatePipelineInstanceResp) {
+    option (google.api.http) = {
+      post: "/v1/pipeline_instance/create",
       body: "*"
     };
   }

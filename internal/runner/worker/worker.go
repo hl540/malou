@@ -26,8 +26,8 @@ func (wp *WorkerPool) ResetSize(size int) {
 	// 如果预期大小比当前大，需要扩容
 	if length < size {
 		for i := 0; i <= size-length; i++ {
-			workID := utils.StringWithCharset(10, utils.Charset2)
-			wp.pool[workID] = ""
+			workId := utils.StringWithCharset(10, utils.Charset2)
+			wp.pool[workId] = ""
 		}
 		return
 	}
@@ -52,37 +52,37 @@ func (wp *WorkerPool) TryWorker() string {
 	defer wp.lock.Unlock()
 	wp.lock.TryLock()
 
-	for workID, available := range wp.pool {
+	for workId, available := range wp.pool {
 		if available == "" {
-			wp.pool[workID] = time.Now().String()
-			return workID
+			wp.pool[workId] = time.Now().String()
+			return workId
 		}
 	}
 	return ""
 }
 
-// Worker 使用work，拉取到pipeline后使用正式的pipelineID填充
-func (wp *WorkerPool) Worker(workID, pipelineID string) bool {
+// Worker 使用work，拉取到pipeline后使用正式的pipelineId填充
+func (wp *WorkerPool) Worker(workId, pipelineId string) bool {
 	wp.lock.Lock()
 	defer wp.lock.Unlock()
 	wp.lock.TryLock()
 
 	// 检查work是否存在
-	if _, ok := wp.pool[workID]; !ok {
+	if _, ok := wp.pool[workId]; !ok {
 		return false
 	}
-	wp.pool[workID] = pipelineID
+	wp.pool[workId] = pipelineId
 	return true
 }
 
 // Release 归还令牌
-func (wp *WorkerPool) Release(workID string) {
+func (wp *WorkerPool) Release(workId string) {
 	wp.lock.Lock()
 	defer wp.lock.Unlock()
 
 	// 检查work是否存在
-	if _, ok := wp.pool[workID]; ok {
-		wp.pool[workID] = ""
+	if _, ok := wp.pool[workId]; ok {
+		wp.pool[workId] = ""
 	}
 }
 
@@ -133,7 +133,7 @@ var Pool *WorkerPool
 func InitWorkerPool(poolSize int) {
 	Pool = &WorkerPool{pool: make(map[string]string)}
 	for i := 0; i < poolSize; i++ {
-		workID := utils.StringWithCharset(10, utils.Charset2)
-		Pool.pool[workID] = ""
+		workId := utils.StringWithCharset(10, utils.Charset2)
+		Pool.pool[workId] = ""
 	}
 }

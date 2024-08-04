@@ -14,7 +14,7 @@ func (w *WebServer) CreatePipeline(ctx context.Context, req *v1.CreatePipelineRe
 	if err != nil {
 		return nil, status.Error(codes.Internal, err.Error())
 	}
-	return &v1.CreatePipelineResp{PipelineId: pipeline.ID}, nil
+	return &v1.CreatePipelineResp{PipelineId: pipeline.Id}, nil
 }
 
 func (w *WebServer) createPipelineReq2DO(in *v1.CreatePipelineReq) (*storage.PipelineModel, []*storage.PipelineStepModel) {

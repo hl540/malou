@@ -41,10 +41,14 @@ func NewRunnerDao(session Session) *RunnerDao {
 // transaction
 func (d *RunnerDao) Create(ctx context.Context, runner *RunnerModel, labels []*RunnerLabelModel, envs []*RunnerEnvModel) (err error) {
 	return TransactionCtx(ctx, func(ctx context.Context, tx Session) error {
-		runner.CreatedAt = time.Now().Unix()
-		runner.UpdatedAt = time.Now().Unix()
 		runnerInsert := fmt.Sprintf("INSERT INTO %s (`code`, `secret`, `name`, `created_at`, `updated_at`) VALUES (?, ?, ?, ?, ?)", RunnerTable)
-		runnerInsertArgs := []any{runner.Code, runner.Secret, runner.Name, time.Now().Unix(), time.Now().Unix()}
+		runnerInsertArgs := []any{
+			runner.Code,
+			runner.Secret,
+			runner.Name,
+			time.Now().Unix(),
+			time.Now().Unix(),
+		}
 		result, err := tx.ExecContext(ctx, runnerInsert, runnerInsertArgs...)
 		if err != nil {
 			return err
@@ -79,7 +83,7 @@ func (d *RunnerDao) Create(ctx context.Context, runner *RunnerModel, labels []*R
 // transaction
 func (d *RunnerDao) Update(ctx context.Context, runner *RunnerModel, labels []*RunnerLabelModel, envs []*RunnerEnvModel) error {
 	return TransactionCtx(ctx, func(ctx context.Context, tx Session) error {
-		update := fmt.Sprintf("UPDATE %s SET `name` = ?, `updated_at` = ? WHERE `id` = ?", RunnerTable)
+		update := fmt.Sprintf("UPDATE %s SET `name` = ?, `updated_at` = ? WHERE `Id` = ?", RunnerTable)
 		args := []any{runner.Name, time.Now().Unix(), runner.Id}
 		_, err := tx.ExecContext(ctx, update, args...)
 		if err != nil {
@@ -125,7 +129,7 @@ type RunnerSearchListParam struct {
 }
 
 func (d *RunnerDao) SearchList(ctx context.Context, param *RunnerSearchListParam) ([]*RunnerModel, int64, error) {
-	query := fmt.Sprintf("FROM %s AS r LEFT JOIN %s AS rl ON r.`id` = rl.runner_id WHERE 1 = 1", RunnerTable, RunnerLabelTable)
+	query := fmt.Sprintf("FROM %s AS r LEFT JOIN %s AS rl ON r.`Id` = rl.runner_id WHERE 1 = 1", RunnerTable, RunnerLabelTable)
 	args := make([]any, 0)
 	if param.Code != "" {
 		query = fmt.Sprintf("%s AND r.`code` LIKE ?", query)
@@ -155,8 +159,8 @@ func (d *RunnerDao) SearchList(ctx context.Context, param *RunnerSearchListParam
 	return runners, count, nil
 }
 
-func (d *RunnerDao) GetByID(ctx context.Context, id int64) (*RunnerModel, error) {
-	query := fmt.Sprintf("SELECT * FROM %s WHERE `id` = ? LIMIT 1", RunnerTable)
+func (d *RunnerDao) GetById(ctx context.Context, id int64) (*RunnerModel, error) {
+	query := fmt.Sprintf("SELECT * FROM %s WHERE `Id` = ? LIMIT 1", RunnerTable)
 	runner := new(RunnerModel)
 	err := d.GetContext(ctx, runner, query, id)
 	return runner, err
@@ -170,7 +174,7 @@ func (d *RunnerDao) GetByCode(ctx context.Context, code string) (*RunnerModel, e
 }
 
 func (d *RunnerDao) GetInfoById(ctx context.Context, id int64) (*RunnerModel, []*RunnerLabelModel, []*RunnerEnvModel, error) {
-	queryRunner := fmt.Sprintf("SELECT * FROM %s WHERE `id` = ? LIMIT 1", RunnerTable)
+	queryRunner := fmt.Sprintf("SELECT * FROM %s WHERE `Id` = ? LIMIT 1", RunnerTable)
 	runner := new(RunnerModel)
 	err := d.GetContext(ctx, runner, queryRunner, id)
 	if err != nil {

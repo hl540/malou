@@ -10,12 +10,12 @@ import (
 )
 
 func (w *WebServer) PipelineInfo(ctx context.Context, req *v1.PipelineInfoReq) (*v1.PipelineInfoResp, error) {
-	pipeline, steps, err := storage.Pipeline.GetInfoByID(ctx, req.PipelineId)
+	pipeline, steps, err := storage.Pipeline.GetInfoById(ctx, req.PipelineId)
 	if err != nil {
 		return nil, status.Error(codes.NotFound, err.Error())
 	}
 	resp := &v1.PipelineInfoResp{
-		PipelineId: pipeline.ID,
+		PipelineId: pipeline.Id,
 		Name:       pipeline.Name,
 		Steps:      make([]*v1.Step, 0),
 		CreatedAt:  pipeline.CreatedAt,

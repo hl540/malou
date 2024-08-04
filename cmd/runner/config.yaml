@@ -2,6 +2,6 @@ Token: f063f1f1-8170-4d87-9807-8bae7c991394
 ServerHost: 127.0.0.1
 ServerPort: 8787
 HeartbeatFrequency: 1
-PullPipelineFrequency: 15
-WorkerPoolSize: 2
+PullPipelineFrequency: 1
+WorkerPoolSize: 1
 WorkDir: C:\Users\67440\go\src\malou\work

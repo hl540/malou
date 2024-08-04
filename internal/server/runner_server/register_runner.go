@@ -17,7 +17,7 @@ func (s *RunnerServer) RegisterRunner(ctx context.Context, req *v1.RegisterRunne
 		return nil, status.Error(codes.NotFound, err.Error())
 	}
 	claims := server.RunnerRegisterClaims{
-		RunnerID:   runner.Id,
+		RunnerId:   runner.Id,
 		RunnerCode: runner.Code,
 		RegisteredClaims: jwt.RegisteredClaims{
 			IssuedAt:  jwt.NewNumericDate(time.Now()),

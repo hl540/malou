@@ -10,7 +10,7 @@ import (
 
 func (w *WebServer) UpdateRunner(ctx context.Context, req *v1.UpdateRunnerReq) (*v1.UpdateRunnerResp, error) {
 	newRunner, newLabels, newEnvs := w.updateRunnerReqVO2DO(req)
-	runner, err := storage.Runner.GetByID(ctx, newRunner.Id)
+	runner, err := storage.Runner.GetById(ctx, newRunner.Id)
 	if err != nil {
 		return nil, status.Error(codes.NotFound, err.Error())
 	}

@@ -7,24 +7,24 @@ import (
 )
 
 type PipelineModel struct {
-	ID        int64  `db:"id"`
+	Id        int64  `db:"id"`
 	Name      string `db:"name"`
 	CreatedAt int64  `db:"created_at"`
 	UpdatedAt int64  `db:"updated_at"`
 }
 
 type PipelineStepModel struct {
-	ID         int64  `db:"id"`
-	PipelineID int64  `db:"pipeline_id"`
+	Id         int64  `db:"id"`
+	PipelineId int64  `db:"pipeline_id"`
 	Name       string `db:"name"`
 	Image      string `db:"image"`
 	Commands   []string
 }
 
 type PipelineStepCmdModel struct {
-	ID             int64  `db:"id"`
-	PipelineID     int64  `db:"pipeline_id"`
-	PipelineStepID int64  `db:"pipeline_step_id"`
+	Id             int64  `db:"id"`
+	PipelineId     int64  `db:"pipeline_id"`
+	PipelineStepId int64  `db:"pipeline_step_id"`
 	Cmd            string `db:"cmd"`
 }
 
@@ -46,26 +46,26 @@ func (d *PipelineDao) Create(ctx context.Context, pipeline *PipelineModel, steps
 		if err != nil {
 			return err
 		}
-		pipeline.ID, err = result.LastInsertId()
+		pipeline.Id, err = result.LastInsertId()
 		if err != nil {
 			return err
 		}
 		// 插入step
 		for _, step := range steps {
-			step.PipelineID = pipeline.ID
+			step.PipelineId = pipeline.Id
 			stepInsert := fmt.Sprintf("INSERT INTO %s (`pipeline_id`, `name`, `image`) VALUES (?, ?, ?)", PipelineStepTable)
-			result, err := tx.ExecContext(ctx, stepInsert, step.PipelineID, step.Name, step.Image)
+			result, err := tx.ExecContext(ctx, stepInsert, step.PipelineId, step.Name, step.Image)
 			if err != nil {
 				return err
 			}
-			step.ID, err = result.LastInsertId()
+			step.Id, err = result.LastInsertId()
 			if err != nil {
 				return err
 			}
 			// 插入cmd
 			for _, cmd := range step.Commands {
 				cmdInsert := fmt.Sprintf("INSERT INTO %s (`pipeline_id`, `pipeline_step_id`, `cmd`) VALUES (?, ?, ?)", PipelineStepCmdTable)
-				if _, err := tx.ExecContext(ctx, cmdInsert, pipeline.ID, step.ID, cmd); err != nil {
+				if _, err := tx.ExecContext(ctx, cmdInsert, pipeline.Id, step.Id, cmd); err != nil {
 					return err
 				}
 			}
@@ -79,36 +79,36 @@ func (d *PipelineDao) Create(ctx context.Context, pipeline *PipelineModel, steps
 func (d *PipelineDao) Update(ctx context.Context, pipeline *PipelineModel, steps []*PipelineStepModel) error {
 	return TransactionCtx(ctx, func(ctx context.Context, tx Session) error {
 		// 更新pipeline
-		pipelineUpdate := fmt.Sprintf("UPDATE %s SET `name` = ?, `updated_at` = ? WHERE id= ?", PipelineTable)
-		_, err := tx.ExecContext(ctx, pipelineUpdate, pipeline.Name, time.Now().Unix(), pipeline.ID)
+		pipelineUpdate := fmt.Sprintf("UPDATE %s SET `name` = ?, `updated_at` = ? WHERE Id= ?", PipelineTable)
+		_, err := tx.ExecContext(ctx, pipelineUpdate, pipeline.Name, time.Now().Unix(), pipeline.Id)
 		if err != nil {
 			return err
 		}
 		// 清理原来的step和cmd
 		delQuery := fmt.Sprintf("DELETE FROM %s where pipeline_id = ?", PipelineStepCmdTable)
-		if _, err := tx.ExecContext(ctx, delQuery, pipeline.ID); err != nil {
+		if _, err := tx.ExecContext(ctx, delQuery, pipeline.Id); err != nil {
 			return err
 		}
 		delQuery = fmt.Sprintf("DELETE FROM %s where pipeline_id = ?", PipelineStepTable)
-		if _, err := tx.ExecContext(ctx, delQuery, pipeline.ID); err != nil {
+		if _, err := tx.ExecContext(ctx, delQuery, pipeline.Id); err != nil {
 			return err
 		}
 		// 插入step
 		for _, step := range steps {
-			step.PipelineID = pipeline.ID
+			step.PipelineId = pipeline.Id
 			stepInsert := fmt.Sprintf("INSERT INTO %s (`pipeline_id`, `name`, `image`) VALUES (?, ?, ?)", PipelineStepTable)
-			result, err := tx.ExecContext(ctx, stepInsert, step.PipelineID, step.Name, step.Image)
+			result, err := tx.ExecContext(ctx, stepInsert, step.PipelineId, step.Name, step.Image)
 			if err != nil {
 				return err
 			}
-			step.ID, err = result.LastInsertId()
+			step.Id, err = result.LastInsertId()
 			if err != nil {
 				return err
 			}
 			// 插入cmd
 			for _, cmd := range step.Commands {
 				cmdInsert := fmt.Sprintf("INSERT INTO %s (`pipeline_id`, `pipeline_step_id`, `cmd`) VALUES (?, ?, ?)", PipelineStepCmdTable)
-				if _, err := tx.ExecContext(ctx, cmdInsert, pipeline.ID, step.ID, cmd); err != nil {
+				if _, err := tx.ExecContext(ctx, cmdInsert, pipeline.Id, step.Id, cmd); err != nil {
 					return err
 				}
 			}
@@ -117,8 +117,8 @@ func (d *PipelineDao) Update(ctx context.Context, pipeline *PipelineModel, steps
 	})
 }
 
-func (d *PipelineDao) GetByID(ctx context.Context, id int64) (*PipelineModel, error) {
-	query := fmt.Sprintf("SELECT * FROM %s WHERE id = ?", PipelineTable)
+func (d *PipelineDao) GetById(ctx context.Context, id int64) (*PipelineModel, error) {
+	query := fmt.Sprintf("SELECT * FROM %s WHERE Id = ?", PipelineTable)
 	var pipeline PipelineModel
 	err := d.GetContext(ctx, &pipeline, query, id)
 	if err != nil {
@@ -127,8 +127,8 @@ func (d *PipelineDao) GetByID(ctx context.Context, id int64) (*PipelineModel, er
 	return &pipeline, nil
 }
 
-func (d *PipelineDao) GetInfoByID(ctx context.Context, id int64) (*PipelineModel, []*PipelineStepModel, error) {
-	pipelineQuery := fmt.Sprintf("SELECT * FROM %s WHERE id = ?", PipelineTable)
+func (d *PipelineDao) GetInfoById(ctx context.Context, id int64) (*PipelineModel, []*PipelineStepModel, error) {
+	pipelineQuery := fmt.Sprintf("SELECT * FROM %s WHERE Id = ?", PipelineTable)
 	pipeline := new(PipelineModel)
 	err := d.GetContext(ctx, pipeline, pipelineQuery, id)
 	if err != nil {
@@ -144,7 +144,7 @@ func (d *PipelineDao) GetInfoByID(ctx context.Context, id int64) (*PipelineModel
 	for _, step := range steps {
 		cmdQuery := fmt.Sprintf("SELECT * FROM %s WHERE pipeline_step_id = ?", PipelineStepCmdTable)
 		var commands []*PipelineStepCmdModel
-		err = d.SelectContext(ctx, &commands, cmdQuery, step.ID)
+		err = d.SelectContext(ctx, &commands, cmdQuery, step.Id)
 		if err != nil {
 			return nil, nil, err
 		}
@@ -169,7 +169,7 @@ func (d *PipelineDao) SearchList(ctx context.Context, param *PipelineSearchListP
 		args = append(args, `%`+param.Name+`%`)
 	}
 
-	countQuery := fmt.Sprintf("SELECT COUNT(`id`) %s", query)
+	countQuery := fmt.Sprintf("SELECT COUNT(`Id`) %s", query)
 	var count int64
 	if err := d.GetContext(ctx, &count, countQuery, args...); err != nil {
 		return nil, 0, err

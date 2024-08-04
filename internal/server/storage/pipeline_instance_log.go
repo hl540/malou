@@ -6,7 +6,8 @@ import (
 )
 
 type PipelineInstanceLogModel struct {
-	PipelineInstanceID string `db:"pipeline_instance_id"`
+	PipelineInstanceId string `db:"pipeline_instance_id"`
+	Serial             int64  `db:"serial"`
 	StepName           string `db:"step_name"`
 	Cmd                string `db:"cmd"`
 	Result             string `db:"result"`
@@ -24,9 +25,10 @@ func NewPipelineInstanceLogDao(session Session) *PipelineInstanceLogDao {
 }
 
 func (d *PipelineInstanceLogDao) Insert(ctx context.Context, data *PipelineInstanceLogModel) error {
-	insert := fmt.Sprintf("INSERT INTO %s (`pipeline_instance_id`, `step_name`, `cmd`, `result`, `type`, `timestamp`, `duration`) VALUES (?, ?, ?, ?, ?, ?, ?)", PipelineInstanceLogTable)
+	insert := fmt.Sprintf("INSERT INTO %s (`pipeline_instance_id`, `serial`, `step_name`, `cmd`, `result`, `type`, `timestamp`, `duration`) VALUES (?, ?, ?, ?, ?, ?, ?, ?)", PipelineInstanceLogTable)
 	args := []any{
-		data.PipelineInstanceID,
+		data.PipelineInstanceId,
+		data.Serial,
 		data.StepName,
 		data.Cmd,
 		data.Result,
@@ -38,16 +40,10 @@ func (d *PipelineInstanceLogDao) Insert(ctx context.Context, data *PipelineInsta
 	return err
 }
 
-func (d *PipelineInstanceLogDao) DelByPipelineInstanceID(ctx context.Context, pipelineInstanceID string) error {
-	delQuery := fmt.Sprintf("DELETE FROM %s WHERE `pipeline_instance_id` = ?", PipelineInstanceLogTable)
-	_, err := d.ExecContext(ctx, delQuery, pipelineInstanceID)
-	return err
-}
-
-func (d *PipelineInstanceLogDao) GetLogsByPipelineInstanceID(ctx context.Context, pipelineInstanceID string, offset int64) ([]*PipelineInstanceLogModel, error) {
+func (d *PipelineInstanceLogDao) GetLogsByPipelineInstanceId(ctx context.Context, pipelineInstanceId string, offset int64) ([]*PipelineInstanceLogModel, error) {
 	query := fmt.Sprintf("SELECT * FROM %s WHERE `pipeline_instance_id` = ? OFFSET ?", PipelineInstanceLogTable)
 	var logs []*PipelineInstanceLogModel
-	err := d.SelectContext(ctx, &logs, query, pipelineInstanceID, offset)
+	err := d.SelectContext(ctx, &logs, query, pipelineInstanceId, offset)
 	if err != nil {
 		return nil, err
 	}

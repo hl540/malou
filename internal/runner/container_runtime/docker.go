@@ -74,8 +74,8 @@ func (d *DockerRuntime) pullImage(ctx context.Context, imageName string) error {
 	return err
 }
 
-func (d *DockerRuntime) AttachExec(ctx context.Context, containerID, cmd string) (io.Reader, error) {
-	execResp, err := d.ContainerExecCreate(ctx, containerID, container.ExecOptions{
+func (d *DockerRuntime) AttachExec(ctx context.Context, containerId, cmd string) (io.Reader, error) {
+	execResp, err := d.ContainerExecCreate(ctx, containerId, container.ExecOptions{
 		AttachStderr: true,
 		AttachStdout: true,
 		WorkingDir:   WorkDir,
@@ -96,11 +96,11 @@ func (d *DockerRuntime) AttachExec(ctx context.Context, containerID, cmd string)
 	return io.MultiReader(bufio.NewReader(&stdoutBuf), bufio.NewReader(&stderrBuf)), nil
 }
 
-func (d *DockerRuntime) Clear(ctx context.Context, containerID string) error {
+func (d *DockerRuntime) Clear(ctx context.Context, containerId string) error {
 	// 查询容器是否存在
 	containers, err := d.ContainerList(ctx, container.ListOptions{
 		All:     true,
-		Filters: filters.NewArgs(filters.Arg("id", containerID)),
+		Filters: filters.NewArgs(filters.Arg("id", containerId)),
 	})
 	if err != nil {
 		return err
@@ -109,7 +109,7 @@ func (d *DockerRuntime) Clear(ctx context.Context, containerID string) error {
 		return nil
 	}
 	// 删除容器，Force
-	if err := d.ContainerRemove(ctx, containerID, container.RemoveOptions{Force: true}); err != nil {
+	if err := d.ContainerRemove(ctx, containerId, container.RemoveOptions{Force: true}); err != nil {
 		return err
 	}
 	return nil

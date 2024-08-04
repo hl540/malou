@@ -20,7 +20,7 @@ func (w *WebServer) RunnerInfo(ctx context.Context, req *v1.RunnerInfoReq) (*v1.
 		return nil, status.Error(codes.NotFound, err.Error())
 	}
 	// 获取最近30秒的runner健康状态
-	health, err := storage.RunnerHealth.GetLatestByRunnerID(ctx, runner.Id, time.Now().Add(-30*time.Second).Unix())
+	health, err := storage.RunnerHealth.GetLatestByRunnerId(ctx, runner.Id, time.Now().Add(-30*time.Second).Unix())
 	if err != nil && !errors.Is(err, sql.ErrNoRows) {
 		return nil, status.Error(codes.NotFound, err.Error())
 	}
@@ -32,7 +32,7 @@ func (w *WebServer) RunnerInfo(ctx context.Context, req *v1.RunnerInfoReq) (*v1.
 		CreatedAt: runner.CreatedAt,
 		UpdatedAt: runner.UpdatedAt,
 		Health:    w.runnerHealthDO2VO(health),
-		Status:    utils.Ternary(health != nil, v1.RunnerStatusType_Offline, v1.RunnerStatusType_Offline),
+		Status:    utils.Ternary(health != nil, v1.RunnerStatusType_Online, v1.RunnerStatusType_Offline),
 	}
 	return resp, nil
 }

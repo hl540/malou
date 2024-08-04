@@ -9,12 +9,12 @@ const WorkDir = "/var/workspace"
 
 type ContainerRuntime interface {
 	Create(ctx context.Context, imageName string, env []*EnvValue, workDir string) (string, error)
-	AttachExec(ctx context.Context, containerID, cmd string) (io.Reader, error)
-	Clear(ctx context.Context, containerID string) error
+	AttachExec(ctx context.Context, containerId, cmd string) (io.Reader, error)
+	Clear(ctx context.Context, containerId string) error
 }
 
 type ContainerLog struct {
-	ContainerID string
+	ContainerId string
 	Cmd         string
 	Timestamp   int64
 }

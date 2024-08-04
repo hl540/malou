@@ -26,20 +26,20 @@ func NewBaseStepExecutor(cr container_runtime.ContainerRuntime, reportLog *Repor
 
 func (e *BaseStepExecutor) Execute(ctx context.Context, step *v1.Step, workDir string) error {
 	// 创建容器
-	containerID, err := e.cr.Create(ctx, step.Image, nil, workDir)
+	containerId, err := e.cr.Create(ctx, step.Image, nil, workDir)
 	if err != nil {
 		return err
 	}
 	defer func() {
 		// 清理容器
-		if err := e.cr.Clear(ctx, containerID); err != nil {
-			log.Printf("An error occurred to delete the %s: %s", containerID, err.Error())
+		if err := e.cr.Clear(ctx, containerId); err != nil {
+			log.Printf("An error occurred to delete the %s: %s", containerId, err.Error())
 		}
 	}()
 
 	// 多个命令Attach的方式依次执行
 	for _, cmd := range step.Commands {
-		out, err := e.cr.AttachExec(ctx, containerID, cmd)
+		out, err := e.cr.AttachExec(ctx, containerId, cmd)
 		// 执行随便清理容器
 		if err != nil {
 			return err

@@ -29,7 +29,7 @@ func (w *WebServer) PipelineList(ctx context.Context, req *v1.PipelineListReq) (
 
 func (w *WebServer) pipelineListItemDO2VO(in *storage.PipelineModel) *v1.PipelineListItem {
 	return &v1.PipelineListItem{
-		PipelineId: in.ID,
+		PipelineId: in.Id,
 		Name:       in.Name,
 		CreatedAt:  in.CreatedAt,
 		UpdatedAt:  in.UpdatedAt,

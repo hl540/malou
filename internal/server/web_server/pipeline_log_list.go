@@ -13,7 +13,7 @@ func (w *WebServer) PipelineLogList(ctx context.Context, req *v1.PipelineInstanc
 	//var results []*v1.PipelineLog
 	//for _, log := range logs {
 	//	results = append(results, &v1.PipelineLog{
-	//		PipelineId: log.PipelineID,
+	//		PipelineId: log.PipelineId,
 	//		Type:       v1.PipelineLogType(v1.PipelineLogType_value[log.Type]),
 	//		Step:       log.Step,
 	//		Cmd:        log.Cmd,

@@ -27,6 +27,7 @@ const (
 	MalouWeb_UpdatePipeline_FullMethodName          = "/MalouWeb/UpdatePipeline"
 	MalouWeb_PipelineInfo_FullMethodName            = "/MalouWeb/PipelineInfo"
 	MalouWeb_PipelineList_FullMethodName            = "/MalouWeb/PipelineList"
+	MalouWeb_CreatePipelineInstance_FullMethodName  = "/MalouWeb/CreatePipelineInstance"
 	MalouWeb_PipelineInstanceLogList_FullMethodName = "/MalouWeb/PipelineInstanceLogList"
 )
 
@@ -50,6 +51,8 @@ type MalouWebClient interface {
 	PipelineInfo(ctx context.Context, in *PipelineInfoReq, opts ...grpc.CallOption) (*PipelineInfoResp, error)
 	// 获取pipeline列表
 	PipelineList(ctx context.Context, in *PipelineListReq, opts ...grpc.CallOption) (*PipelineListResp, error)
+	// 创建pipelines实例
+	CreatePipelineInstance(ctx context.Context, in *CreatePipelineInstanceReq, opts ...grpc.CallOption) (*CreatePipelineInstanceResp, error)
 	// 拉取pipeline实例执行日志
 	PipelineInstanceLogList(ctx context.Context, in *PipelineInstanceLogListReq, opts ...grpc.CallOption) (*PipelineInstanceLogListResp, error)
 }
@@ -134,6 +137,15 @@ func (c *malouWebClient) PipelineList(ctx context.Context, in *PipelineListReq, 
 	return out, nil
 }
 
+func (c *malouWebClient) CreatePipelineInstance(ctx context.Context, in *CreatePipelineInstanceReq, opts ...grpc.CallOption) (*CreatePipelineInstanceResp, error) {
+	out := new(CreatePipelineInstanceResp)
+	err := c.cc.Invoke(ctx, MalouWeb_CreatePipelineInstance_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *malouWebClient) PipelineInstanceLogList(ctx context.Context, in *PipelineInstanceLogListReq, opts ...grpc.CallOption) (*PipelineInstanceLogListResp, error) {
 	out := new(PipelineInstanceLogListResp)
 	err := c.cc.Invoke(ctx, MalouWeb_PipelineInstanceLogList_FullMethodName, in, out, opts...)
@@ -163,6 +175,8 @@ type MalouWebServer interface {
 	PipelineInfo(context.Context, *PipelineInfoReq) (*PipelineInfoResp, error)
 	// 获取pipeline列表
 	PipelineList(context.Context, *PipelineListReq) (*PipelineListResp, error)
+	// 创建pipelines实例
+	CreatePipelineInstance(context.Context, *CreatePipelineInstanceReq) (*CreatePipelineInstanceResp, error)
 	// 拉取pipeline实例执行日志
 	PipelineInstanceLogList(context.Context, *PipelineInstanceLogListReq) (*PipelineInstanceLogListResp, error)
 	mustEmbedUnimplementedMalouWebServer()
@@ -195,6 +209,9 @@ func (UnimplementedMalouWebServer) PipelineInfo(context.Context, *PipelineInfoRe
 }
 func (UnimplementedMalouWebServer) PipelineList(context.Context, *PipelineListReq) (*PipelineListResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method PipelineList not implemented")
+}
+func (UnimplementedMalouWebServer) CreatePipelineInstance(context.Context, *CreatePipelineInstanceReq) (*CreatePipelineInstanceResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreatePipelineInstance not implemented")
 }
 func (UnimplementedMalouWebServer) PipelineInstanceLogList(context.Context, *PipelineInstanceLogListReq) (*PipelineInstanceLogListResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method PipelineInstanceLogList not implemented")
@@ -356,6 +373,24 @@ func _MalouWeb_PipelineList_Handler(srv interface{}, ctx context.Context, dec fu
 	return interceptor(ctx, in, info, handler)
 }
 
+func _MalouWeb_CreatePipelineInstance_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreatePipelineInstanceReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MalouWebServer).CreatePipelineInstance(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: MalouWeb_CreatePipelineInstance_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MalouWebServer).CreatePipelineInstance(ctx, req.(*CreatePipelineInstanceReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _MalouWeb_PipelineInstanceLogList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(PipelineInstanceLogListReq)
 	if err := dec(in); err != nil {
@@ -412,6 +447,10 @@ var MalouWeb_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "PipelineList",
 			Handler:    _MalouWeb_PipelineList_Handler,
+		},
+		{
+			MethodName: "CreatePipelineInstance",
+			Handler:    _MalouWeb_CreatePipelineInstance_Handler,
 		},
 		{
 			MethodName: "PipelineInstanceLogList",

@@ -18,6 +18,7 @@ const (
 	PipelineStepTable        = "ml_pipeline_step"
 	PipelineStepCmdTable     = "ml_pipeline_step_cmd"
 	PipelineInstanceTable    = "ml_pipeline_instance"
+	PipelineInstanceEnvTable = "ml_pipeline_instance_env"
 	PipelineInstanceLogTable = "ml_pipeline_instance_log"
 )
 
@@ -25,6 +26,7 @@ var (
 	Runner              *RunnerDao
 	RunnerHealth        *RunnerHealthDao
 	Pipeline            *PipelineDao
+	PipelineInstance    *PipelineInstanceDao
 	PipelineInstanceLog *PipelineInstanceLogDao
 )
 
@@ -43,6 +45,7 @@ func InitDB(config *server.Config) (*sqlx.DB, error) {
 	Runner = NewRunnerDao(db)
 	RunnerHealth = NewRunnerHealthDao(db)
 	Pipeline = NewPipelineDao(db)
+	PipelineInstance = NewPipelineInstanceDao(db)
 	PipelineInstanceLog = NewPipelineInstanceLogDao(db)
 
 	return db, nil

@@ -2,57 +2,42 @@ package runner_server
 
 import (
 	"context"
+	"database/sql"
+	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/hl540/malou/internal/server/storage"
 	v1 "github.com/hl540/malou/proto/v1"
-	"github.com/hl540/malou/utils"
-	"github.com/sirupsen/logrus"
-	"time"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
-var pipeline = &v1.Pipeline{
-	Kind: "docker",
-	Type: "xxxx",
-	Name: utils.StringWithCharsetV3(8),
-	Steps: []*v1.Step{
-		{
-			Name:  "checkout",
-			Image: "alpine:3.18",
-			Commands: []string{
-				"ls -l -a",
-				"echo $(pwd)",
-				"echo $(uname -a) > log.txt",
-				fmt.Sprintf("echo %s >> %s.txt", utils.StringWithCharsetV4(100), utils.StringWithCharsetV3(10)),
-				fmt.Sprintf("echo %s >> %s.txt", utils.StringWithCharsetV4(100), utils.StringWithCharsetV3(10)),
-				fmt.Sprintf("echo %s >> %s.txt", utils.StringWithCharsetV4(100), utils.StringWithCharsetV3(10)),
-				fmt.Sprintf("echo %s >> %s.txt", utils.StringWithCharsetV4(100), utils.StringWithCharsetV3(10)),
-				"echo $(ls -l -a) > log.txt",
-				"sleep 10",
-			},
-		},
-		{
-			Name:  "build",
-			Image: "alpine:3.18",
-			Commands: []string{
-				"echo $(pwd)",
-				"ls -l -a",
-			},
-		},
-	},
-}
-
-var t = time.NewTicker(5 * time.Second)
+var i = 0
 
 func (s *RunnerServer) PullPipeline(ctx context.Context, req *v1.PullPipelineReq) (*v1.PullPipelineResp, error) {
-	return nil, errors.New("not")
-	select {
-	case <-t.C:
-		logrus.WithContext(ctx).Infof("[PullPipeline] %v", req)
-		return &v1.PullPipelineResp{
-			PipelineId: utils.StringWithCharsetV2(20),
-			Pipeline:   pipeline,
-		}, nil
-	default:
-		return nil, errors.New("not")
+	if i > 0 {
+		return nil, status.Errorf(codes.FailedPrecondition, "pull_pipeline is already running")
 	}
+	i++
+	fmt.Printf("[PullPipeline] %v\n", req)
+	runner, err := storage.Runner.GetByCode(ctx, "f063f1f1-8170-4d87-9807-8bae7c991394")
+	if err != nil {
+		return nil, status.Error(codes.NotFound, err.Error())
+	}
+	pipelineInstance, err := storage.PipelineInstance.GetPendingByRunnerId(ctx, runner.Id)
+	if err != nil && errors.Is(err, sql.ErrNoRows) {
+		return nil, status.Error(codes.NotFound, "pipeline not found")
+	}
+	if err != nil {
+		return nil, status.Error(codes.Internal, err.Error())
+	}
+	var runningConfig v1.Pipeline
+	err = json.Unmarshal([]byte(pipelineInstance.RuntimeConfig), &runningConfig)
+	if err != nil {
+		return nil, status.Error(codes.Internal, err.Error())
+	}
+	return &v1.PullPipelineResp{
+		PipelineId: pipelineInstance.Id,
+		Pipeline:   &runningConfig,
+	}, nil
 }

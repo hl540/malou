@@ -10,7 +10,7 @@ import (
 
 func (w *WebServer) UpdatePipeline(ctx context.Context, req *v1.UpdatePipelineReq) (*v1.UpdatePipelineResp, error) {
 	newPipeline, newSteps := w.updatePipelineReq2DO(req)
-	pipeline, err := storage.Pipeline.GetByID(ctx, newPipeline.ID)
+	pipeline, err := storage.Pipeline.GetById(ctx, newPipeline.Id)
 	if err != nil {
 		return nil, status.Error(codes.NotFound, err.Error())
 	}
@@ -18,12 +18,12 @@ func (w *WebServer) UpdatePipeline(ctx context.Context, req *v1.UpdatePipelineRe
 	if err != nil {
 		return nil, status.Error(codes.Internal, err.Error())
 	}
-	return &v1.UpdatePipelineResp{PipelineId: pipeline.ID}, nil
+	return &v1.UpdatePipelineResp{PipelineId: pipeline.Id}, nil
 }
 
 func (w *WebServer) updatePipelineReq2DO(in *v1.UpdatePipelineReq) (*storage.PipelineModel, []*storage.PipelineStepModel) {
 	out1 := &storage.PipelineModel{
-		ID:   in.PipelineId,
+		Id:   in.PipelineId,
 		Name: in.Name,
 	}
 	out2 := make([]*storage.PipelineStepModel, 0)

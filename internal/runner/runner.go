@@ -110,8 +110,8 @@ func (a *Runner) Heartbeat(ctx context.Context) {
 // PullPipeline 拉取pipeline
 func (a *Runner) PullPipeline(ctx context.Context) {
 	// 尝试获取work
-	workID := worker.Pool.TryWorker()
-	if workID == "" {
+	workId := worker.Pool.TryWorker()
+	if workId == "" {
 		logrus.WithContext(ctx).Info("[PullPipeline] there are no idle worker")
 		return
 	}
@@ -120,12 +120,12 @@ func (a *Runner) PullPipeline(ctx context.Context) {
 	pullPipelineResp, err := a.MalouClient.PullPipeline(ctx, &v1.PullPipelineReq{})
 	if err != nil {
 		// 归还worker
-		worker.Pool.Release(workID)
+		worker.Pool.Release(workId)
 		logrus.WithContext(ctx).Errorf("[PullPipeline] request failed, err: %s", err.Error())
 		return
 	}
-	// 使用拉取到的PipelineID填充work
-	if !worker.Pool.Worker(workID, pullPipelineResp.PipelineId) {
+	// 使用拉取到的PipelineId填充work
+	if !worker.Pool.Worker(workId, pullPipelineResp.PipelineId) {
 		logrus.WithContext(ctx).Info("[PullPipeline] worker don't exist")
 		return
 	}
@@ -133,19 +133,19 @@ func (a *Runner) PullPipeline(ctx context.Context) {
 	go func() {
 		a.ExecutePipeline(newCtx, pullPipelineResp.PipelineId, pullPipelineResp.Pipeline)
 		// 归还worker
-		worker.Pool.Release(workID)
+		worker.Pool.Release(workId)
 	}()
 }
 
 // ExecutePipeline 执行pipeline
-func (a *Runner) ExecutePipeline(ctx context.Context, pipelineID string, pipeline *v1.Pipeline) {
+func (a *Runner) ExecutePipeline(ctx context.Context, pipelineId string, pipeline *v1.Pipeline) {
 	// 创建stream，回传执行过程log
 	reportStream, err := a.MalouClient.ReportPipelineLog(ctx)
 	if err != nil {
 		logrus.WithContext(ctx).Errorf("Failed to create report stream, %s", err.Error())
 	}
 	defer reportStream.CloseAndRecv()
-	reportLog := NewReportLog(pipelineID, reportStream)
+	reportLog := NewReportLog(pipelineId, reportStream)
 
 	// 创建执行step的环境，默认docker容器运行时
 	containerRuntime, err := container_runtime.NewDockerRuntime(a.DockerClient)
@@ -155,7 +155,7 @@ func (a *Runner) ExecutePipeline(ctx context.Context, pipelineID string, pipelin
 	}
 
 	// 工作目录，需要挂载到容器中
-	workDir := path.Join(a.Config.WorkDir, pipelineID)
+	workDir := path.Join(a.Config.WorkDir, pipelineId)
 
 	for _, step := range pipeline.Steps {
 		// 创建step执行器
